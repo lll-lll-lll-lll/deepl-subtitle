@@ -10,6 +10,10 @@ type WebVtt struct {
 	Header      *Header       `json:"header"`
 }
 
+func NewWebVtt() *WebVtt {
+	return &WebVtt{}
+}
+
 type Header struct {
 	Head string `json:"head"`
 	Note string `json:"note"`
@@ -38,6 +42,7 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 	return &VTTElement{}
 }
 
+//SkipHeader ignore header of vtt file.
 func (wv *WebVtt) SkipHeader() *Header {
 	return &Header{}
 }
