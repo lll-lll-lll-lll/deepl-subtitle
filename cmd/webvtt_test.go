@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"os/exec"
 	"testing"
 )
@@ -17,9 +18,10 @@ func TestGetVtt(t *testing.T) {
 	}
 }
 
+//TestWebVTTStruct Test method and property of WebVtt struct
 func TestWebVTTStruct(t *testing.T) {
-	webVtt := WebVtt{}
 	t.Run("webVtt startTime", func(t *testing.T) {
+		webVtt := WebVtt{}
 		vttElement := &VTTElement{
 			StartTime: "00:00:06.649",
 			EndTime:   "00:00:10.690",
@@ -56,6 +58,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("append webVtt element to WebVtt", func(t *testing.T) {
+		webVtt := WebVtt{}
 		vttElement1 := &VTTElement{
 			StartTime: "00:00:06.649",
 		}
@@ -64,8 +67,36 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 		webVtt.AppendVttElement(vttElement1)
 		webVtt.AppendVttElement(vttElement2)
-		for _, vtt := range webVtt.VttElements {
-			log.Println(vtt)
+
+		if len(webVtt.VttElements) != 2 {
+			t.Errorf("didn't append VttElement. \n got %d want 2", len(webVtt.VttElements))
 		}
 	})
+
+	t.Run("open vtt file", func(t *testing.T) {
+		filename := "testvtt.en.vtt"
+		file, err := os.Open(filename)
+		defer file.Close()
+
+		if err != nil {
+			t.Errorf("file doesn't exist.")
+		}
+	})
+	//
+	//t.Run("scan vtt file", func(t *testing.T) {
+	//	webVtt := WebVtt{}
+	//
+	//	got := webVtt.Scanner()
+	//	want := &VTTElement{
+	//		StartTime: "00:00:06.649",
+	//		EndTime:   "00:00:10.690",
+	//		Position:  "position:63%",
+	//		Line:      "line:0%",
+	//		Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
+	//	}
+	//
+	//	if got != want {
+	//		t.Errorf("didn't scan one block vtt")
+	//	}
+	//})
 }
