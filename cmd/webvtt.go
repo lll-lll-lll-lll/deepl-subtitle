@@ -9,6 +9,7 @@ type VTTElement struct {
 	EndTime   string `json:"end_time"`
 	Position  string `json:"position"`
 	Line      string `json:"line"`
+	Text      string `json:"text"`
 }
 
 //AppendVttElement append VTTElement to WebVtt
