@@ -92,6 +92,20 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 
 		webVtt.VttFile = copyFile
+		err = os.Remove("copy" + filename)
+		if err != nil {
+			t.Errorf("remove err %s", err)
+		}
+	})
+
+	t.Run("init webvtt struct and file initialize", func(t *testing.T) {
+		filename := "testvtt.en-ehkg1hFWq8A.vtt"
+		webVtt := NewWebVtt(filename)
+		got := webVtt.VttFile
+		want := "testvtt.en-ehkg1hFWq8A.vtt"
+		if got.Name() == want {
+			t.Errorf("got %s, want %s", got.Name(), want)
+		}
 	})
 
 	t.Run("skip vtt file header", func(t *testing.T) {

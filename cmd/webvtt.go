@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"io"
+	"log"
 	"os"
 )
 
@@ -10,8 +12,13 @@ type WebVtt struct {
 	Header      *Header       `json:"header"`
 }
 
-func NewWebVtt() *WebVtt {
-	return &WebVtt{}
+func NewWebVtt(filename string) *WebVtt {
+	f, err := createFileObject(filename)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	return &WebVtt{VttFile: f}
 }
 
 type Header struct {
@@ -45,4 +52,27 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 //SkipHeader ignore header of vtt file.
 func (wv *WebVtt) SkipHeader() *Header {
 	return &Header{}
+}
+
+func createFileObject(filename string) (*os.File, error) {
+	file, err := os.Open(filename)
+
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	copyFile, err := os.Create("copy" + filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = io.Copy(copyFile, file)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return copyFile, nil
 }
