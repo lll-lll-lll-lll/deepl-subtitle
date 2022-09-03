@@ -1,7 +1,16 @@
 package cmd
 
+import "os"
+
 type WebVtt struct {
+	VttFile     os.File       `json:"file"`
 	VttElements []*VTTElement `json:"vtt_elements"`
+	Header      *Header       `json:"header"`
+}
+
+type Header struct {
+	Head string `json:"head"`
+	Note string `json:"note"`
 }
 
 type VTTElement struct {
@@ -22,6 +31,11 @@ func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 	wv.VttElements = append(wv.VttElements, vtt)
 }
 
+// NewVttElement initialize VTTElement
 func (wv *WebVtt) NewVttElement() *VTTElement {
 	return &VTTElement{}
+}
+
+func (wv *WebVtt) SkipHeader() *Header {
+	return &Header{}
 }

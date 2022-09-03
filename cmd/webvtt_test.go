@@ -82,7 +82,23 @@ func TestWebVTTStruct(t *testing.T) {
 			t.Errorf("file doesn't exist.")
 		}
 	})
-	//
+
+	t.Run("skip vtt file header", func(t *testing.T) {
+		webVtt := WebVtt{}
+		got := webVtt.SkipHeader()
+		want := Header{
+			Head: "WEBVTT",
+			Note: "Kind: captions",
+		}
+
+		if got.Head != want.Head {
+			t.Errorf("got %s, want %s", got.Head, want.Head)
+		}
+		if got.Note != want.Note {
+			t.Errorf("got %s, want %s", got.Note, want.Note)
+		}
+	})
+
 	//t.Run("scan vtt file", func(t *testing.T) {
 	//	webVtt := WebVtt{}
 	//
