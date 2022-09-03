@@ -25,11 +25,18 @@ func TestWebVTTStruct(t *testing.T) {
 			EndTime:   "00:00:10.690",
 			Position:  "position:63%",
 			Line:      "line:0%",
+			Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
 		}
 		webVtt.AppendVttElement(vttElement)
 
 		got := webVtt.VttElements[0]
-		want := VTTElement{StartTime: "00:00:06.649", EndTime: "00:00:10.690", Position: "position:63%", Line: "line:0%"}
+		want := VTTElement{
+			StartTime: "00:00:06.649",
+			EndTime:   "00:00:10.690",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
+		}
 		if got.StartTime != want.StartTime {
 			t.Errorf("got %s want %s", got.StartTime, want.StartTime)
 		}
@@ -42,6 +49,10 @@ func TestWebVTTStruct(t *testing.T) {
 		if got.Position != want.Position {
 			t.Errorf("got %s want %s", got.Position, want.Position)
 		}
+		if got.Text != want.Text {
+			t.Errorf("got %s want %s", got.Text, want.Text)
+		}
+
 	})
 
 	t.Run("append webVtt element to WebVtt", func(t *testing.T) {
