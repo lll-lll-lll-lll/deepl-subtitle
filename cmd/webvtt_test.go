@@ -9,10 +9,10 @@ import (
 )
 
 func TestGetVtt(t *testing.T) {
-	//url := "https://www.youtube.com/watch?v=YS4e4q9oBaU&t=3764s"
-	shortMovie := "https://www.youtube.com/watch?v=UVhIMwHDS7k"
+	url := "https://www.youtube.com/watch?v=YS4e4q9oBaU&t=3764s"
+	//shortMovie := "https://www.youtube.com/watch?v=UVhIMwHDS7k"
 	filename := "testvtt"
-	cmd := exec.Command("yt-dlp", "--skip-download", "-o", filename, "--sub-format", "vtt", "--write-subs", shortMovie)
+	cmd := exec.Command("yt-dlp", "--skip-download", "-o", filename, "--sub-format", "vtt", "--write-subs", url)
 	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
@@ -76,7 +76,6 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("open vtt file", func(t *testing.T) {
-		webVtt := WebVtt{}
 		filename := "testvtt.en-ehkg1hFWq8A.vtt"
 		file, err := os.Open(filename)
 		defer file.Close()
@@ -91,45 +90,35 @@ func TestWebVTTStruct(t *testing.T) {
 			t.Errorf("file doesn't exist.")
 		}
 
-		webVtt.VttFile = copyFile
+		//bytesFile, err := ioutil.ReadFile(filename)
+		//if err != nil {
+		//	t.Errorf("err is %s", err)
+		//}
+
 		err = os.Remove("copy" + filename)
 		if err != nil {
 			t.Errorf("remove err %s", err)
 		}
 	})
 
-	t.Run("init webvtt struct and file initialize", func(t *testing.T) {
-		filename := "testvtt.en-ehkg1hFWq8A.vtt"
-		f, err := createFileObject(filename)
-		if err != nil {
-			log.Fatal(err)
-		}
-		webVtt := NewWebVtt(f)
-		got := webVtt.VttFile
-		want := "testvtt.en-ehkg1hFWq8A.vtt"
-		if got.Name() == want {
-			t.Errorf("got %s, want %s", got.Name(), want)
-		}
-	})
-
 	t.Run("skip vtt file header", func(t *testing.T) {
 		filename := "testvtt.en-ehkg1hFWq8A.vtt"
-		f, err := createFileObject(filename)
+		f, err := CreateFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		got := webVtt.SkipHeader()
+		webVtt.SkipHeader(f)
 		want := VTTHeader{
 			Head: "WEBVTT",
 			Note: "Kind: captions",
 		}
 
-		if got.Head != want.Head {
-			t.Errorf("got %s, want %s", got.Head, want.Head)
+		if webVtt.VTTHeader.Head != want.Head {
+			t.Errorf("got %s want %s", webVtt.VTTHeader.Head, want.Head)
 		}
-		if got.Note != want.Note {
-			t.Errorf("got %s, want %s", got.Note, want.Note)
+		if webVtt.VTTHeader.Note != want.Note {
+			t.Errorf("got %s want %s", webVtt.VTTHeader.Note, want.Note)
 		}
 	})
 
