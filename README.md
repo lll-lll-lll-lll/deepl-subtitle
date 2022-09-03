@@ -1,1 +1,1 @@
-# deepl-youtube-subtitle
+# deepl-subtitle
