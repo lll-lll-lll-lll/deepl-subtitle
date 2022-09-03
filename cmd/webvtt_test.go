@@ -100,7 +100,11 @@ func TestWebVTTStruct(t *testing.T) {
 
 	t.Run("init webvtt struct and file initialize", func(t *testing.T) {
 		filename := "testvtt.en-ehkg1hFWq8A.vtt"
-		webVtt := NewWebVtt(filename)
+		f, err := createFileObject(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
 		got := webVtt.VttFile
 		want := "testvtt.en-ehkg1hFWq8A.vtt"
 		if got.Name() == want {
@@ -110,7 +114,11 @@ func TestWebVTTStruct(t *testing.T) {
 
 	t.Run("skip vtt file header", func(t *testing.T) {
 		filename := "testvtt.en-ehkg1hFWq8A.vtt"
-		webVtt := NewWebVtt(filename)
+		f, err := createFileObject(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
 		got := webVtt.SkipHeader()
 		want := VTTHeader{
 			Head: "WEBVTT",

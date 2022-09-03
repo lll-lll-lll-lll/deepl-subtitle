@@ -3,7 +3,6 @@ package cmd
 import (
 	"bufio"
 	"io"
-	"log"
 	"os"
 )
 
@@ -14,13 +13,9 @@ type WebVtt struct {
 	VTTScanner  *bufio.Scanner `json:"scanner"`
 }
 
-func NewWebVtt(filename string) *WebVtt {
-	f, err := createFileObject(filename)
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	}
-	return &WebVtt{VttFile: f}
+func NewWebVtt(f *os.File) *WebVtt {
+	scanner := bufio.NewScanner(f)
+	return &WebVtt{VttFile: f, VTTScanner: scanner}
 }
 
 type VTTHeader struct {
