@@ -2,11 +2,7 @@ package cmd
 
 import (
 	"bufio"
-	"fmt"
-	"io"
 	"io/ioutil"
-	"log"
-	"os"
 	"regexp"
 	"strings"
 )
@@ -57,14 +53,11 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 }
 
 //SkipHeader ignore header of vtt file.
-func (wv *WebVtt) SkipHeader(file string) {
+func (wv *WebVtt) SkipHeader() {
 	var lineNum = 0
-	scanner := bufio.NewScanner(strings.NewReader(file))
-	scanner.Split(ScanHeader)
-	for scanner.Scan() {
-		text := scanner.Text()
-		fmt.Println("text")
-		log.Fatal(text)
+	wv.VTTScanner.Split(ScanHeader)
+	for wv.VTTScanner.Scan() {
+		text := wv.VTTScanner.Text()
 		switch lineNum {
 		case 0:
 			wv.VTTHeader.Head = text
@@ -78,7 +71,7 @@ func (wv *WebVtt) SkipHeader(file string) {
 }
 
 func ScanHeader(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	advance, token, err = bufio.ScanWords(data, atEOF)
+	advance, token, err = bufio.ScanLines(data, atEOF)
 	return
 }
 
@@ -94,25 +87,10 @@ func ScanTimeLine(data []byte, atEOF bool) (advance int, token []byte, err error
 
 //CreateFile use when WebVTT struct is initialized.
 func CreateFile(filename string) (string, error) {
-	file, err := os.Open(filename)
-
+	bytesFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return "", err
+		return "", nil
 	}
-	defer file.Close()
-
-	copyFile, err := os.Create("copy" + filename)
-
-	if err != nil {
-		return "", err
-	}
-
-	_, err = io.Copy(copyFile, file)
-
-	if err != nil {
-		return "", err
-	}
-	bytesFile, err := ioutil.ReadAll(file)
 	return string(bytesFile), nil
 }
 

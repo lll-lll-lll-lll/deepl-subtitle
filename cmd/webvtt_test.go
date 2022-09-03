@@ -108,7 +108,7 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.SkipHeader(f)
+		webVtt.SkipHeader()
 		want := VTTHeader{
 			Head: "WEBVTT",
 			Note: "Kind: captions",
