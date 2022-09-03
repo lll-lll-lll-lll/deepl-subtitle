@@ -79,6 +79,7 @@ func (wv *WebVtt) SkipHeader(splitFunc bufio.SplitFunc) {
 	}
 }
 
+//ScanLines Read the contents of the file and structure the data
 func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	vttElement := wv.NewVttElement()
 	wv.VTTScanner.Split(splitFunc)
