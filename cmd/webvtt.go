@@ -54,6 +54,7 @@ func (wv *WebVtt) SkipHeader() *Header {
 	return &Header{}
 }
 
+//createFileObject use when WebVTT struct is initialized.
 func createFileObject(filename string) (*os.File, error) {
 	file, err := os.Open(filename)
 
