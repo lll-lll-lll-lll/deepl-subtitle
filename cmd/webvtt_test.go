@@ -22,24 +22,25 @@ func TestWebVTTStruct(t *testing.T) {
 	t.Run("webVtt startTime", func(t *testing.T) {
 		vttElement := &VTTElement{
 			StartTime: "00:00:06.649",
+			EndTime:   "00:00:10.690",
+			Position:  "position:63%",
+			Line:      "line:0%",
 		}
 		webVtt.AppendVttElement(vttElement)
 
 		got := webVtt.VttElements[0]
-		want := VTTElement{StartTime: "00:00:06.649"}
+		want := VTTElement{StartTime: "00:00:06.649", EndTime: "00:00:10.690", Position: "position:63%", Line: "line:0%"}
 		if got.StartTime != want.StartTime {
 			t.Errorf("got %s want %s", got.StartTime, want.StartTime)
 		}
-	})
-
-	t.Run("webVtt endTime", func(t *testing.T) {
-		got := &VTTElement{
-			StartTime: "00:00:02.610",
-			EndTime:   "00:00:06.649",
+		if got.EndTime != want.EndTime {
+			t.Errorf("got %s want %s", got.EndTime, want.EndTime)
 		}
-		want := "00:00:06.649"
-		if got.EndTime != want {
-			t.Errorf("got %s, want %s", got, want)
+		if got.Line != want.Line {
+			t.Errorf("got %s want %s", got.Line, want.Line)
+		}
+		if got.Position != want.Position {
+			t.Errorf("got %s want %s", got.Position, want.Position)
 		}
 	})
 
