@@ -20,7 +20,7 @@ func TestGetVtt(t *testing.T) {
 	}
 }
 
-func TestWebVTT(t *testing.T) {
+func TestWebVTTStruct(t *testing.T) {
 	t.Run("webvtt starttime", func(t *testing.T) {
 		webVtt := cmd.WebVtt{}
 		vttElement := &cmd.VTTElement{
