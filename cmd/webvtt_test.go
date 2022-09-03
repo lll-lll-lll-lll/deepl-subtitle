@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -8,9 +9,10 @@ import (
 )
 
 func TestGetVtt(t *testing.T) {
-	url := "https://www.youtube.com/watch?v=YS4e4q9oBaU&t=3764s"
+	//url := "https://www.youtube.com/watch?v=YS4e4q9oBaU&t=3764s"
+	shortMovie := "https://www.youtube.com/watch?v=UVhIMwHDS7k"
 	filename := "testvtt"
-	cmd := exec.Command("yt-dlp", "--skip-download", "--sub-format", "vtt", "--write-subs", "--sub-langs", "en", "-o", filename, url)
+	cmd := exec.Command("yt-dlp", "--skip-download", "-o", filename, "--sub-format", "vtt", "--write-subs", shortMovie)
 	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
@@ -74,13 +76,22 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("open vtt file", func(t *testing.T) {
-		filename := "testvtt.en.vtt"
+		webVtt := WebVtt{}
+		filename := "testvtt.en-ehkg1hFWq8A.vtt"
 		file, err := os.Open(filename)
 		defer file.Close()
 
+		copyFile, err := os.Create("copy" + filename)
+		if err != nil {
+			t.Errorf("%s", err)
+		}
+
+		_, err = io.Copy(copyFile, file)
 		if err != nil {
 			t.Errorf("file doesn't exist.")
 		}
+
+		webVtt.VttFile = copyFile
 	})
 
 	t.Run("skip vtt file header", func(t *testing.T) {

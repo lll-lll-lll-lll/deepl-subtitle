@@ -1,9 +1,11 @@
 package cmd
 
-import "os"
+import (
+	"os"
+)
 
 type WebVtt struct {
-	VttFile     os.File       `json:"file"`
+	VttFile     *os.File      `json:"file"`
 	VttElements []*VTTElement `json:"vtt_elements"`
 	Header      *Header       `json:"header"`
 }
