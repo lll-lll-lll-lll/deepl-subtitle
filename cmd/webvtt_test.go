@@ -129,18 +129,18 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanTimeLine(ScanTimeLineSplitFunc)
-		//got := webVtt.VttElements[0]
-		//want := &VTTElement{
-		//	StartTime: "00:00:06.649",
-		//	EndTime:   "00:00:10.690",
-		//	Position:  "position:63%",
-		//	Line:      "line:0%",
-		//	Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
-		//}
-		//if got != want {
-		//	t.Errorf("got %s want %s", got.Text, want.Text)
-		//}
+		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		got := webVtt.VttElements[1]
+		want := &VTTElement{
+			StartTime: "00:00:06.649",
+			EndTime:   "00:00:10.690",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "- Yo what is going on guys,",
+		}
+		if got.Text != want.Text {
+			t.Errorf("got %s want %s", got.Text, want.Text)
+		}
 	})
 
 	//t.Run("scan vtt file", func(t *testing.T) {

@@ -9,11 +9,6 @@ import (
 	"strings"
 )
 
-// Constants
-const (
-	webvttTimeBoundariesSeparator = " --> "
-)
-
 type CustomScanner struct {
 }
 
@@ -45,6 +40,7 @@ type VTTElement struct {
 	Position  string `json:"position"`
 	Line      string `json:"line"`
 	Text      string `json:"text"`
+	Separator string `json:"separator"`
 }
 
 //Scan scan and bind one block of vtt file.
@@ -83,14 +79,37 @@ func (wv *WebVtt) SkipHeader(splitFunc bufio.SplitFunc) {
 	}
 }
 
-func (wv *WebVtt) ScanTimeLine(splitFunc bufio.SplitFunc) {
+func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
+	vttElement := wv.NewVttElement()
 	wv.VTTScanner.Split(splitFunc)
+	var vttElementFlag int
 	for wv.VTTScanner.Scan() {
-		text := wv.VTTScanner.Text()
-		if text == "" {
-			fmt.Println("empty row")
+		line := wv.VTTScanner.Text()
+		switch {
+
+		case CheckTimeRegexpFlag(line):
+			if vttElementFlag == 0 {
+				vttElementFlag++
+				vttElement.StartTime = line
+			} else {
+				vttElement.EndTime = line
+				vttElementFlag--
+			}
+
+		case CheckSeparatorFlag(line):
+			vttElement.Separator = line
+
+		case CheckPositionFlag(line):
+			vttElement.Position = line
+
+		case CheckLineFlag(line):
+			vttElement.Line = line
+		case line == "":
+			wv.AppendVttElement(vttElement)
+			vttElement = wv.NewVttElement()
+		default:
+			vttElement.Text += line
 		}
-		fmt.Println(text)
 	}
 
 	if err := wv.VTTScanner.Err(); err != nil {
@@ -106,32 +125,35 @@ func ScanHeaderSplitFunc(data []byte, atEOF bool) (advance int, token []byte, er
 
 func ScanTimeLineSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
-
-	if CheckTimeLineRegexpFlag(string(token)) {
-		advance, token, err = bufio.ScanWords(data, atEOF)
-		return
+	tstr := string(token)
+	if CheckTimeRegexpFlag(tstr) || CheckSeparatorFlag(tstr) || CheckPositionFlag(tstr) || CheckLineFlag(tstr) {
+		{
+			advance, token, err = bufio.ScanWords(data, atEOF)
+			return
+		}
 	}
 
 	return
 }
 
-func CheckTimeLineRegexpFlag(token string) bool {
-	// Check if the first 2 characters are 0~9 of int
-	checkRegexpFlag := CheckRegexp(`^[0-9]+`, string(token))
+//CheckTimeRegexpFlag Check if the first 2 characters are 0~9 of int
+func CheckTimeRegexpFlag(token string) bool {
+	return CheckRegexp(`^[0-9]+`, token)
+}
 
-	// Check if the first character is `-->`
-	checkSeparatorFlag := CheckRegexp(`^-->`, string(token))
+//CheckSeparatorFlag // Check if the first character is `-->`
+func CheckSeparatorFlag(token string) bool {
+	return CheckRegexp(`^-->`, token)
+}
 
-	// Check if the first character is `position:...`
-	checkPositionFlag := CheckRegexp(`^position:[0-9]+%`, string(token))
+//CheckPositionFlag Check if the first character is `position:...`
+func CheckPositionFlag(token string) bool {
+	return CheckRegexp(`^position:[0-9]+%`, token)
+}
 
-	// Check if the first character is `line:...`
-	checkLineFlag := CheckRegexp(`^line:[0-9]+%`, string(token))
-	if checkRegexpFlag || checkSeparatorFlag || checkPositionFlag || checkLineFlag {
-		return true
-	} else {
-		return false
-	}
+//CheckLineFlag Check if the first character is `line:...`
+func CheckLineFlag(token string) bool {
+	return CheckRegexp(`^line:[0-9]+%`, token)
 }
 
 //CreateFile use when WebVTT struct is initialized.
