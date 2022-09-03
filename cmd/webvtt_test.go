@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -22,6 +23,70 @@ func TestGetVtt(t *testing.T) {
 
 //TestWebVTTStruct Test method and property of WebVtt struct
 func TestWebVTTStruct(t *testing.T) {
+	webvttstructtest := []struct {
+		StartTime string
+		EndTime   string
+		Position  string
+		Line      string
+		Text      string
+	}{
+		{
+			StartTime: "",
+			EndTime:   "",
+			Position:  "",
+			Line:      "",
+			Text:      "WEBVTTKind: captions",
+		},
+		{
+			StartTime: "00:00:00.350",
+			EndTime:   "00:00:01.530",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "- Yo what is going on guys,",
+		},
+		{
+			StartTime: "00:00:01.530",
+			EndTime:   "00:00:02.770",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "welcome back to the channel.",
+		},
+		{
+			StartTime: "00:00:02.770",
+			EndTime:   "00:00:05.240",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "My name's Sonny and todayI'm gonna teach you all about",
+		},
+		{
+			StartTime: "00:00:05.240",
+			EndTime:   "00:00:06.730",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "the useEffect Hook",
+		},
+		{
+			StartTime: "00:00:06.730",
+			EndTime:   "00:00:08.840",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "and why it has transformed",
+		},
+		{
+			StartTime: "00:00:08.840",
+			EndTime:   "00:00:11.110",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "the way that we usefunctional components and why",
+		},
+		{
+			StartTime: "00:00:11.110",
+			EndTime:   "00:00:12.158",
+			Position:  "position:63%",
+			Line:      "line:0%",
+			Text:      "you need to know it.♪ I know ♪",
+		},
+	}
 	filename := "testvtt.en-ehkg1hFWq8A.vtt"
 	t.Run("webVtt startTime", func(t *testing.T) {
 		webVtt := WebVtt{}
@@ -30,7 +95,7 @@ func TestWebVTTStruct(t *testing.T) {
 			EndTime:   "00:00:10.690",
 			Position:  "position:63%",
 			Line:      "line:0%",
-			Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
+			Text:      "So I wanted to start out with an introduction to the go language itself. Now I know that",
 		}
 		webVtt.AppendVttElement(vttElement)
 
@@ -40,7 +105,7 @@ func TestWebVTTStruct(t *testing.T) {
 			EndTime:   "00:00:10.690",
 			Position:  "position:63%",
 			Line:      "line:0%",
-			Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
+			Text:      "So I wanted to start out with an introduction to the go language itself. Now I know that",
 		}
 		if got.StartTime != want.StartTime {
 			t.Errorf("got %s want %s", got.StartTime, want.StartTime)
@@ -143,20 +208,33 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 	})
 
-	//t.Run("scan vtt file", func(t *testing.T) {
-	//	webVtt := WebVtt{}
-	//
-	//	got := webVtt.Scanner()
-	//	want := &VTTElement{
-	//		StartTime: "00:00:06.649",
-	//		EndTime:   "00:00:10.690",
-	//		Position:  "position:63%",
-	//		Line:      "line:0%",
-	//		Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
-	//	}
-	//
-	//	if got != want {
-	//		t.Errorf("didn't scan one block vtt")
-	//	}
-	//})
+	t.Run("test", func(t *testing.T) {
+		f, err := CreateFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		elements := webVtt.VttElements
+		for i, tt := range webvttstructtest {
+			d := elements[i]
+			if tt.StartTime != d.StartTime {
+				t.Errorf("got %s want %s", d.StartTime, tt.StartTime)
+			}
+			if tt.EndTime != d.EndTime {
+				t.Errorf("got %s want %s", d.EndTime, tt.EndTime)
+			}
+			if tt.Position != d.Position {
+				t.Errorf("got %s want %s", d.Position, tt.Position)
+			}
+			if tt.Line != d.Line {
+				t.Errorf("got %s want %s", d.Line, tt.Line)
+			}
+			if tt.Text != d.Text {
+				t.Errorf("got %s want %s", d.Text, tt.Text)
+			}
+			fmt.Println(d, tt)
+
+		}
+	})
 }

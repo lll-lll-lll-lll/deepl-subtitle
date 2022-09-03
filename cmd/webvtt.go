@@ -104,6 +104,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 
 		case CheckLineFlag(line):
 			vttElement.Line = line
+
 		case line == "":
 			wv.AppendVttElement(vttElement)
 			vttElement = wv.NewVttElement()
