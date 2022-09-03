@@ -1,7 +1,6 @@
-package deeplyoutubesubtitle
+package cmd
 
 import (
-	"github.com/lll-lll-lll-lll/deepl-subtitle/cmd"
 	"log"
 	"os/exec"
 	"testing"
@@ -22,24 +21,24 @@ func TestGetVtt(t *testing.T) {
 
 func TestWebVTTStruct(t *testing.T) {
 	t.Run("webvtt starttime", func(t *testing.T) {
-		webVtt := cmd.WebVtt{}
-		vttElement := &cmd.VTTElement{
+		webVtt := WebVtt{}
+		vttElement := &VTTElement{
 			StartTime: "00:00:06.649",
 		}
 		webVtt.AppendVttElement(vttElement)
 
 		got := webVtt.VttElements[0]
-		want := &cmd.VTTElement{StartTime: "00:00:06.649"}
+		want := VTTElement{StartTime: "00:00:06.649"}
 		if got.StartTime != want.StartTime {
 			t.Errorf("got %s want %s", got.StartTime, want.StartTime)
 		}
 	})
 	t.Run("append webvtt element to WebVtt", func(t *testing.T) {
-		webVtt := cmd.WebVtt{}
-		vttElement1 := &cmd.VTTElement{
+		webVtt := WebVtt{}
+		vttElement1 := &VTTElement{
 			StartTime: "00:00:06.649",
 		}
-		vttElement2 := &cmd.VTTElement{
+		vttElement2 := &VTTElement{
 			StartTime: "00:00:15.620",
 		}
 		webVtt.AppendVttElement(vttElement1)
