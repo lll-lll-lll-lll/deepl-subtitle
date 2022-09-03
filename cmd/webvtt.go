@@ -1,15 +1,17 @@
 package cmd
 
 import (
+	"bufio"
 	"io"
 	"log"
 	"os"
 )
 
 type WebVtt struct {
-	VttFile     *os.File      `json:"file"`
-	VttElements []*VTTElement `json:"vtt_elements"`
-	Header      *Header       `json:"header"`
+	VttFile     *os.File       `json:"file"`
+	VttElements []*VTTElement  `json:"vtt_elements"`
+	VTTHeader   *VTTHeader     `json:"header"`
+	VTTScanner  *bufio.Scanner `json:"scanner"`
 }
 
 func NewWebVtt(filename string) *WebVtt {
@@ -21,7 +23,7 @@ func NewWebVtt(filename string) *WebVtt {
 	return &WebVtt{VttFile: f}
 }
 
-type Header struct {
+type VTTHeader struct {
 	Head string `json:"head"`
 	Note string `json:"note"`
 }
@@ -50,8 +52,8 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 }
 
 //SkipHeader ignore header of vtt file.
-func (wv *WebVtt) SkipHeader() *Header {
-	return &Header{}
+func (wv *WebVtt) SkipHeader() *VTTHeader {
+	return &VTTHeader{}
 }
 
 //createFileObject use when WebVTT struct is initialized.

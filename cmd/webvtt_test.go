@@ -109,9 +109,10 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("skip vtt file header", func(t *testing.T) {
-		webVtt := WebVtt{}
+		filename := "testvtt.en-ehkg1hFWq8A.vtt"
+		webVtt := NewWebVtt(filename)
 		got := webVtt.SkipHeader()
-		want := Header{
+		want := VTTHeader{
 			Head: "WEBVTT",
 			Note: "Kind: captions",
 		}
