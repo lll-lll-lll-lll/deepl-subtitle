@@ -9,9 +9,7 @@ import (
 func TestGetVtt(t *testing.T) {
 	url := "https://www.youtube.com/watch?v=YS4e4q9oBaU&t=3764s"
 	filename := "testvtt"
-	cmd := exec.Command(
-		"yt-dlp", "--skip-download", "--sub-format",
-		"vtt", "--write-subs", "--sub-langs", "en", "-o", filename, url)
+	cmd := exec.Command("yt-dlp", "--skip-download", "--sub-format", "vtt", "--write-subs", "--sub-langs", "en", "-o", filename, url)
 	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
@@ -20,8 +18,8 @@ func TestGetVtt(t *testing.T) {
 }
 
 func TestWebVTTStruct(t *testing.T) {
-	t.Run("webvtt starttime", func(t *testing.T) {
-		webVtt := WebVtt{}
+	webVtt := WebVtt{}
+	t.Run("webVtt startTime", func(t *testing.T) {
 		vttElement := &VTTElement{
 			StartTime: "00:00:06.649",
 		}
@@ -33,8 +31,19 @@ func TestWebVTTStruct(t *testing.T) {
 			t.Errorf("got %s want %s", got.StartTime, want.StartTime)
 		}
 	})
-	t.Run("append webvtt element to WebVtt", func(t *testing.T) {
-		webVtt := WebVtt{}
+
+	t.Run("webVtt endTime", func(t *testing.T) {
+		got := &VTTElement{
+			StartTime: "00:00:02.610",
+			EndTime:   "00:00:06.649",
+		}
+		want := "00:00:06.649"
+		if got.EndTime != want {
+			t.Errorf("got %s, want %s", got, want)
+		}
+	})
+
+	t.Run("append webVtt element to WebVtt", func(t *testing.T) {
 		vttElement1 := &VTTElement{
 			StartTime: "00:00:06.649",
 		}
@@ -47,5 +56,4 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Println(vtt)
 		}
 	})
-
 }
