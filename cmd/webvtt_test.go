@@ -22,6 +22,7 @@ func TestGetVtt(t *testing.T) {
 
 //TestWebVTTStruct Test method and property of WebVtt struct
 func TestWebVTTStruct(t *testing.T) {
+	filename := "testvtt.en-ehkg1hFWq8A.vtt"
 	t.Run("webVtt startTime", func(t *testing.T) {
 		webVtt := WebVtt{}
 		vttElement := &VTTElement{
@@ -76,7 +77,6 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("open vtt file", func(t *testing.T) {
-		filename := "testvtt.en-ehkg1hFWq8A.vtt"
 		file, err := os.Open(filename)
 		defer file.Close()
 
@@ -101,14 +101,13 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 	})
 
-	t.Run("skip vtt file header", func(t *testing.T) {
-		filename := "testvtt.en-ehkg1hFWq8A.vtt"
+	t.Run("SkipHeader method test", func(t *testing.T) {
 		f, err := CreateFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.SkipHeader()
+		webVtt.SkipHeader(ScanHeaderSplitFunc)
 		want := VTTHeader{
 			Head: "WEBVTT",
 			Note: "Kind: captions",
@@ -120,6 +119,28 @@ func TestWebVTTStruct(t *testing.T) {
 		if webVtt.VTTHeader.Note != want.Note {
 			t.Errorf("got %s want %s", webVtt.VTTHeader.Note, want.Note)
 		}
+		t.Log(webVtt.VTTHeader.Head)
+		t.Log(webVtt.VTTHeader.Note)
+	})
+
+	t.Run("ScanTimeLine method test. create VTT Element struct", func(t *testing.T) {
+		f, err := CreateFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanTimeLine(ScanTimeLineSplitFunc)
+		//got := webVtt.VttElements[0]
+		//want := &VTTElement{
+		//	StartTime: "00:00:06.649",
+		//	EndTime:   "00:00:10.690",
+		//	Position:  "position:63%",
+		//	Line:      "line:0%",
+		//	Text:      "So I wanted to start out with an introduction\nto the go language itself. Now I know that",
+		//}
+		//if got != want {
+		//	t.Errorf("got %s want %s", got.Text, want.Text)
+		//}
 	})
 
 	//t.Run("scan vtt file", func(t *testing.T) {
