@@ -2,10 +2,20 @@ package cmd
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 )
+
+// Constants
+const (
+	webvttTimeBoundariesSeparator = " --> "
+)
+
+type CustomScanner struct {
+}
 
 type WebVtt struct {
 	VttFile     string         `json:"file"`
@@ -53,9 +63,9 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 }
 
 //SkipHeader ignore header of vtt file.
-func (wv *WebVtt) SkipHeader() {
+func (wv *WebVtt) SkipHeader(splitFunc bufio.SplitFunc) {
 	var lineNum = 0
-	wv.VTTScanner.Split(ScanHeader)
+	wv.VTTScanner.Split(splitFunc)
 	for wv.VTTScanner.Scan() {
 		text := wv.VTTScanner.Text()
 		switch lineNum {
@@ -68,21 +78,60 @@ func (wv *WebVtt) SkipHeader() {
 		}
 		lineNum++
 	}
+	if err := wv.VTTScanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	}
 }
 
-func ScanHeader(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func (wv *WebVtt) ScanTimeLine(splitFunc bufio.SplitFunc) {
+	wv.VTTScanner.Split(splitFunc)
+	for wv.VTTScanner.Scan() {
+		text := wv.VTTScanner.Text()
+		if text == "" {
+			fmt.Println("empty row")
+		}
+		fmt.Println(text)
+	}
+
+	if err := wv.VTTScanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	}
+}
+
+//ScanHeaderSplitFunc default split func
+func ScanHeaderSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	return
 }
 
-func ScanTimeLine(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	advance, token, err = bufio.ScanWords(data, atEOF)
+func ScanTimeLineSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	advance, token, err = bufio.ScanLines(data, atEOF)
 
-	if CheckRegexp(`^[0-9]+`, string(token)) {
-		token = []byte("number match")
+	if CheckTimeLineRegexpFlag(string(token)) {
+		advance, token, err = bufio.ScanWords(data, atEOF)
+		return
 	}
 
 	return
+}
+
+func CheckTimeLineRegexpFlag(token string) bool {
+	// Check if the first 2 characters are 0~9 of int
+	checkRegexpFlag := CheckRegexp(`^[0-9]+`, string(token))
+
+	// Check if the first character is `-->`
+	checkSeparatorFlag := CheckRegexp(`^-->`, string(token))
+
+	// Check if the first character is `position:...`
+	checkPositionFlag := CheckRegexp(`^position:[0-9]+%`, string(token))
+
+	// Check if the first character is `line:...`
+	checkLineFlag := CheckRegexp(`^line:[0-9]+%`, string(token))
+	if checkRegexpFlag || checkSeparatorFlag || checkPositionFlag || checkLineFlag {
+		return true
+	} else {
+		return false
+	}
 }
 
 //CreateFile use when WebVTT struct is initialized.
