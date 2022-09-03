@@ -9,9 +9,6 @@ import (
 	"strings"
 )
 
-type CustomScanner struct {
-}
-
 type WebVtt struct {
 	VttFile     string         `json:"file"`
 	VttElements []*VTTElement  `json:"vtt_elements"`
