@@ -23,8 +23,8 @@ type VTTElement struct {
 	Text      string `json:"text"`
 }
 
-//Scanner scan and bind one block of vtt file.
-func (wv *WebVtt) Scanner() *VTTElement {
+//Scan scan and bind one block of vtt file.
+func (wv *WebVtt) Scan() *VTTElement {
 	return nil
 }
 
