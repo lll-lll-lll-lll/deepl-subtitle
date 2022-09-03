@@ -12,6 +12,11 @@ type VTTElement struct {
 	Text      string `json:"text"`
 }
 
+//Scanner scan and bind one block of vtt file.
+func (wv *WebVtt) Scanner() *VTTElement {
+	return nil
+}
+
 //AppendVttElement append VTTElement to WebVtt
 func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 	wv.VttElements = append(wv.VttElements, vtt)
