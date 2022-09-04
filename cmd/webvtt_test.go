@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -191,7 +190,7 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 		webVtt := NewWebVtt(f)
 		webVtt.ScanLines(ScanTimeLineSplitFunc)
-		got := webVtt.VttElements[1]
+		got := webVtt.VttElements[0]
 		want := &VTTElement{
 			StartTime: "00:00:06.649",
 			EndTime:   "00:00:10.690",
@@ -229,8 +228,6 @@ func TestWebVTTStruct(t *testing.T) {
 			if tt.Text != d.Text {
 				t.Errorf("got %s want %s", d.Text, tt.Text)
 			}
-			fmt.Println(d, tt)
-
 		}
 	})
 	t.Run("Println Json VTTElement", func(t *testing.T) {
