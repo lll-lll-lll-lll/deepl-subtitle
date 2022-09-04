@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -235,6 +237,24 @@ func TestWebVTTStruct(t *testing.T) {
 			}
 			fmt.Println(d, tt)
 
+		}
+	})
+	t.Run("Println Json VTTElement", func(t *testing.T) {
+		f, err := ReadFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		elements := webVtt.VttElements
+		for _, e := range elements {
+			var out bytes.Buffer
+			b, _ := json.Marshal(e)
+			err = json.Indent(&out, b, "", "  ")
+			if err != nil {
+				panic(err)
+			}
+			t.Log(out.String())
 		}
 	})
 }
