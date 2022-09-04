@@ -167,7 +167,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("SkipHeader method test", func(t *testing.T) {
-		f, err := CreateFile(filename)
+		f, err := ReadFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -189,7 +189,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("ScanTimeLine method test. create VTT Element struct", func(t *testing.T) {
-		f, err := CreateFile(filename)
+		f, err := ReadFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -209,7 +209,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("test", func(t *testing.T) {
-		f, err := CreateFile(filename)
+		f, err := ReadFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}

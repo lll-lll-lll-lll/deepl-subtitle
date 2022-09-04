@@ -160,8 +160,8 @@ func CheckTerminalFlag(token string) bool {
 	return CheckRegexp(`.`, token) || CheckRegexp(`?`, token)
 }
 
-//CreateFile use when WebVTT struct is initialized.
-func CreateFile(filename string) (string, error) {
+//ReadFile use when WebVTT struct is initialized.
+func ReadFile(filename string) (string, error) {
 	bytesFile, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return "", nil
