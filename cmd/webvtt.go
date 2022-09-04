@@ -40,11 +40,6 @@ type VTTElement struct {
 	Separator string `json:"separator"`
 }
 
-//Scan scan and bind one block of vtt file.
-func (wv *WebVtt) Scan() *VTTElement {
-	return nil
-}
-
 //AppendVttElement append VTTElement to WebVtt
 func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 	wv.VttElements = append(wv.VttElements, vtt)
