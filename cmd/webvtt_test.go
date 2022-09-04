@@ -168,7 +168,7 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.SkipHeader(ScanHeaderSplitFunc)
+		webVtt.SkipHeader()
 		want := VTTHeader{
 			Head: "WEBVTT",
 			Note: "Kind: captions",
@@ -251,12 +251,5 @@ func TestWebVTTStruct(t *testing.T) {
 			t.Log(out.String())
 		}
 	})
-	t.Run("Unify Text", func(t *testing.T) {
-		f, err := ReadFile(filename)
-		if err != nil {
-			log.Fatal(err)
-		}
-		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
-	})
+
 }

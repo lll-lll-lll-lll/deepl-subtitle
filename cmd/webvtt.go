@@ -51,9 +51,8 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 }
 
 //SkipHeader ignore header of vtt file.
-func (wv *WebVtt) SkipHeader(splitFunc bufio.SplitFunc) {
+func (wv *WebVtt) SkipHeader() {
 	var lineNum = 0
-	wv.VTTScanner.Split(splitFunc)
 	for wv.VTTScanner.Scan() {
 		text := wv.VTTScanner.Text()
 		switch lineNum {

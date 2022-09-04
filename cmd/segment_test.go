@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"log"
 	"testing"
 )
 
 func TestTextSegment(t *testing.T) {
 	token := "you need to know it? ♪ I know ♪"
+	filename := "testvtt.en-ehkg1hFWq8A.vtt"
 	t.Run("get 「.」and 「?」", func(t *testing.T) {
 		got := CheckTerminalFlag(token)
 		want := true
@@ -31,5 +33,15 @@ func TestTextSegment(t *testing.T) {
 			t.Errorf("got %s want %s", "?", wantterminal)
 		}
 		t.Log(pr, wantterminal, ba)
+	})
+
+	t.Run("Unify Text", func(t *testing.T) {
+		f, err := ReadFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanLines(ScanTimeLineSplitFunc)
+
 	})
 }
