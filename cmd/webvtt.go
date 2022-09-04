@@ -155,6 +155,11 @@ func CheckLineFlag(token string) bool {
 	return CheckRegexp(`^line:[0-9]+%`, token)
 }
 
+//CheckTerminalFlag Check if the en character is `.` or `?`
+func CheckTerminalFlag(token string) bool {
+	return CheckRegexp(`.`, token) || CheckRegexp(`?`, token)
+}
+
 //CreateFile use when WebVTT struct is initialized.
 func CreateFile(filename string) (string, error) {
 	bytesFile, err := ioutil.ReadFile(filename)
