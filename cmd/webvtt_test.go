@@ -32,13 +32,7 @@ func TestWebVTTStruct(t *testing.T) {
 		Line      string
 		Text      string
 	}{
-		{
-			StartTime: "",
-			EndTime:   "",
-			Position:  "",
-			Line:      "",
-			Text:      "WEBVTTKind: captions",
-		},
+
 		{
 			StartTime: "00:00:00.350",
 			EndTime:   "00:00:01.530",
@@ -256,5 +250,13 @@ func TestWebVTTStruct(t *testing.T) {
 			}
 			t.Log(out.String())
 		}
+	})
+	t.Run("Unify Text", func(t *testing.T) {
+		f, err := ReadFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanLines(ScanTimeLineSplitFunc)
 	})
 }

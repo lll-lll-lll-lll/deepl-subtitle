@@ -76,6 +76,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	vttElement := wv.NewVttElement()
 	wv.VTTScanner.Split(splitFunc)
 	var vttElementFlag int
+
 	for wv.VTTScanner.Scan() {
 		line := wv.VTTScanner.Text()
 		switch {
@@ -109,6 +110,8 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	if err := wv.VTTScanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
+	// Skip head element header
+	wv.VttElements = wv.VttElements[1:]
 }
 
 //ScanHeaderSplitFunc default split func
