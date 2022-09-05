@@ -40,7 +40,7 @@ func TestTextSegment(t *testing.T) {
 	// })
 
 	t.Run("`UnifyTextByTerminalPoint` method test ", func(t *testing.T) {
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,7 +55,7 @@ func TestTextSegment(t *testing.T) {
 		//PrintlnJson(w.VttElements)
 	})
 	t.Run("`DeleteEmptyTextVTTElementStruct` method test", func(t *testing.T) {
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}

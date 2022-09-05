@@ -1,7 +1,6 @@
 package deeplyoutubesubtitle
 
 import (
-	"io/ioutil"
 	"regexp"
 )
 
@@ -28,15 +27,6 @@ func CheckLineFlag(token string) bool {
 //CheckTerminalFlag Check if the en character is `.` or `?`
 func CheckTerminalFlag(token string) bool {
 	return CheckRegexp(`.`, token) || CheckRegexp(`?`, token)
-}
-
-//ReadFile use when WebVTT struct is initialized.
-func ReadFile(filename string) (string, error) {
-	bytesFile, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return "", nil
-	}
-	return string(bytesFile), nil
 }
 
 //CheckRegexp Pattern detection of regular expression things method

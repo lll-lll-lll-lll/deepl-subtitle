@@ -2,8 +2,11 @@ package deeplyoutubesubtitle
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -128,4 +131,17 @@ func ScanTimeLineSplitFunc(data []byte, atEOF bool) (advance int, token []byte, 
 	}
 
 	return
+}
+
+//ReadVTTFile use when WebVTT struct is initialized.
+func ReadVTTFile(filename string) (string, error) {
+	ext := filepath.Ext(filename)
+	if ext != ".vtt" {
+		return "", errors.New("your input file extension is not `.vtt`. check your file extension")
+	}
+	bytesFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return "", nil
+	}
+	return string(bytesFile), nil
 }

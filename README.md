@@ -44,9 +44,10 @@ import (
 
 func main() {
 	filename := "example.vtt"
-	f, err := ds.ReadFile(filename)
+	f, err := ds.ReadVTTFile(filename)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
 	webVtt := ds.NewWebVtt(f)
 	webVtt.ScanLines(ds.ScanTimeLineSplitFunc)

@@ -150,7 +150,7 @@ func TestWebVTTStruct(t *testing.T) {
 			t.Errorf("file doesn't exist.")
 		}
 
-		//bytesFile, err := ioutil.ReadFile(filename)
+		//bytesFile, err := ioutil.ReadVTTFile(filename)
 		//if err != nil {
 		//	t.Errorf("err is %s", err)
 		//}
@@ -162,7 +162,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("SkipHeader method test", func(t *testing.T) {
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -184,7 +184,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("ScanTimeLine method test. create VTT Element struct", func(t *testing.T) {
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -204,7 +204,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("test", func(t *testing.T) {
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -231,7 +231,7 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 	})
 	t.Run("Println Json VTTElement", func(t *testing.T) {
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -278,7 +278,7 @@ func TestWebVTTStruct(t *testing.T) {
 				Text:      "",
 			},
 		}
-		f, err := ReadFile(filename)
+		f, err := ReadVTTFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
