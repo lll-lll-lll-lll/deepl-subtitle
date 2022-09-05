@@ -26,29 +26,28 @@ func haveTerminalPoint(locs []int) bool {
 	return false
 }
 
+func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
+	e := vs[untilTerminalCnt].Text
+	locs := SearchTerminalTokenRegexp(e)
+	if haveTerminalPoint(locs) == true {
+		untilTerminalCnt++
+		return RecursiveSearchTerminalPoint(vs, untilTerminalCnt)
+	}
+	return untilTerminalCnt
+}
+
 func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 	es := webVtt.VttElements
-
 	for i := 0; i < len(es)-1; i++ {
-		curt := es[i].Text
-		locs := SearchTerminalTokenRegexp(curt)
-
-		// no `?` or `.` in text
-		if haveTerminalPoint(locs) {
-			continue
+		untilTerminalCnt := RecursiveSearchTerminalPoint(es, i)
+		for j := untilTerminalCnt; j > i; j-- {
+			curt := es[j].Text
+			es[j-1].Text += " " + curt
+			es[j].Text = ""
 		}
-
-		// after terminal point text
-		pt := es[i].Text[:locs[0]]
-		bt := es[i].Text[locs[1]:]
-		next := es[i+1].Text
-		locs = SearchTerminalTokenRegexp(next)
-		if haveTerminalPoint(locs) {
-			es[i+1].Text = bt + next
-			es[i].Text = ""
+		if untilTerminalCnt != 0 {
+			i = untilTerminalCnt
 		}
-		// previous terminal point text
-		es[i-1].Text += pt
 	}
 	webVtt.VttElements = es
 	return webVtt
