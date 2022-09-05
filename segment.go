@@ -1,15 +1,5 @@
 package deeplyoutubesubtitle
 
-import (
-	"regexp"
-)
-
-func SearchTerminalTokenRegexp(token string) []int {
-	r, _ := regexp.Compile("[.?]")
-	locs := r.FindStringIndex(token)
-	return locs
-}
-
 // func SplitByCommaAndQuestion(token string) (string, string, string, string, bool) {
 // 	locs := SearchTerminalTokenRegexp(token)
 // 	if len(locs) == 0 {

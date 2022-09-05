@@ -43,3 +43,9 @@ func ReadFile(filename string) (string, error) {
 func CheckRegexp(pattern, str string) bool {
 	return regexp.MustCompile(pattern).Match([]byte(str))
 }
+
+func SearchTerminalTokenRegexp(token string) []int {
+	r, _ := regexp.Compile("[.?]")
+	locs := r.FindStringIndex(token)
+	return locs
+}
