@@ -40,6 +40,10 @@ type VTTElement struct {
 	Separator string `json:"separator"`
 }
 
+func NewVTTElement() *VTTElement {
+	return &VTTElement{}
+}
+
 //AppendVttElement append VTTElement to WebVtt
 func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 	wv.VttElements = append(wv.VttElements, vtt)
