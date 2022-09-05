@@ -119,8 +119,8 @@ func ScanHeaderSplitFunc(data []byte, atEOF bool) (advance int, token []byte, er
 
 func ScanTimeLineSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
-	tstr := string(token)
-	if CheckTimeRegexpFlag(tstr) || CheckSeparatorFlag(tstr) || CheckPositionFlag(tstr) || CheckLineFlag(tstr) {
+	tokenStr := string(token)
+	if CheckTimeRegexpFlag(tokenStr) || CheckSeparatorFlag(tokenStr) || CheckPositionFlag(tokenStr) || CheckLineFlag(tokenStr) {
 		{
 			advance, token, err = bufio.ScanWords(data, atEOF)
 			return
