@@ -1,5 +1,11 @@
 package deeplyoutubesubtitle
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+)
+
 // func SplitByCommaAndQuestion(token string) (string, string, string, string, bool) {
 // 	locs := SearchTerminalTokenRegexp(token)
 // 	if len(locs) == 0 {
@@ -64,4 +70,17 @@ func DeleteVTTElementStructOfEmptyText(webVtt *WebVtt) *WebVtt {
 	}
 	webVtt.VttElements = es
 	return webVtt
+}
+
+func PrintlnJson(elements []*VTTElement) {
+	for _, e := range elements {
+		var out bytes.Buffer
+		b, _ := json.Marshal(e)
+		err := json.Indent(&out, b, "", "  ")
+		if err != nil {
+			panic(err)
+
+		}
+		fmt.Println(out.String())
+	}
 }
