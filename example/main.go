@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	filename := ""
+	filename := "example.vtt"
 	f, err := ds.ReadVTTFile(filename)
 	if err != nil {
 		log.Fatal(err)
