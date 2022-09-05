@@ -82,7 +82,7 @@ func TestWebVTTStruct(t *testing.T) {
 			Text:      "you need to know it.♪ I know ♪",
 		},
 	}
-	filename := "testvtt.en-ehkg1hFWq8A.vtt"
+	filename := "example.vtt"
 	t.Run("webVtt startTime", func(t *testing.T) {
 		webVtt := WebVtt{}
 		vttElement := &VTTElement{
