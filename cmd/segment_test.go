@@ -42,7 +42,7 @@ func TestTextSegment(t *testing.T) {
 		}
 	})
 
-	t.Run("Unify Text by comma or question", func(t *testing.T) {
+	t.Run("`UnifyTextByTerminalPoint` method test ", func(t *testing.T) {
 		f, err := ReadFile(filename)
 		if err != nil {
 			log.Fatal(err)
