@@ -62,7 +62,7 @@ func TestTextSegment(t *testing.T) {
 		webVtt := NewWebVtt(f)
 		webVtt.ScanLines(ScanTimeLineSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
-		w = DeleteVTTElementStructOfEmptyText(w)
+		w = DeleteVTTElementOfEmptyText(w)
 		got := len(w.VttElements)
 		want := 3
 		if got != want {

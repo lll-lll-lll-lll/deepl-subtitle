@@ -53,7 +53,7 @@ func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 	return webVtt
 }
 
-func DeleteVTTElementStructOfEmptyText(webVtt *WebVtt) *WebVtt {
+func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
 	var i int
 	f := true
 	es := webVtt.VttElements

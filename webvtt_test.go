@@ -285,7 +285,7 @@ func TestWebVTTStruct(t *testing.T) {
 		webVtt := NewWebVtt(f)
 		webVtt.ScanLines(ScanTimeLineSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
-		a := DeleteVTTElementStructOfEmptyText(w)
+		a := DeleteVTTElementOfEmptyText(w)
 		e := a.VttElements
 		for i, tt := range allProcessedDone {
 			d := e[i]

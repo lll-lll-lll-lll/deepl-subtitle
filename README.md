@@ -51,7 +51,7 @@ func main() {
 	webVtt := ds.NewWebVtt(f)
 	webVtt.ScanLines(ds.ScanTimeLineSplitFunc)
 	w := ds.UnifyTextByTerminalPoint(webVtt)
-	a := ds.DeleteVTTElementStructOfEmptyText(w)
+	a := ds.DeleteVTTElementOfEmptyText(w)
 	// console
 	ds.PrintlnJson(a.VttElements)
 }
@@ -61,7 +61,7 @@ func main() {
 <details><summary>output json</summary><div>
 
 ```json
-[
+
 {
   "start_time": "00:00:00.350",
   "end_time": "00:00:02.770",
