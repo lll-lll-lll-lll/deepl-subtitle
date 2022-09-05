@@ -1,6 +1,8 @@
-package cmd
+package deeplyoutubesubtitle
 
-import "regexp"
+import (
+	"regexp"
+)
 
 func SearchTerminalTokenRegexp(token string) []int {
 	r, _ := regexp.Compile("[.?]")
