@@ -1,16 +1,13 @@
 package deeplyoutubesubtitle
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"log"
 	"testing"
 )
 
 func TestTextSegment(t *testing.T) {
 	token := "you need to know it, ♪ I know ♪"
-	filename := "testvtt.en-ehkg1hFWq8A.vtt"
+	filename := "example.vtt"
 	t.Run("get 「.」and 「?」", func(t *testing.T) {
 		got := CheckTerminalFlag(token)
 		want := true
@@ -73,17 +70,4 @@ func TestTextSegment(t *testing.T) {
 		}
 		PrintlnJson(w.VttElements)
 	})
-}
-
-func PrintlnJson(elements []*VTTElement) {
-	for _, e := range elements {
-		var out bytes.Buffer
-		b, _ := json.Marshal(e)
-		err := json.Indent(&out, b, "", "  ")
-		if err != nil {
-			panic(err)
-
-		}
-		fmt.Println(out.String())
-	}
 }
