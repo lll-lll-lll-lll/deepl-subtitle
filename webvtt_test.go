@@ -296,6 +296,7 @@ func TestWebVTTStruct(t *testing.T) {
 				t.Errorf("got %s want %s", tt.EndTime, d.EndTime)
 			}
 		}
+		PrintlnJson(e)
 	})
 
 }
