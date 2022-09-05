@@ -37,6 +37,7 @@ func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
 	return untilTerminalCnt
 }
 
+//UnifyTextByTerminalPoint Concatenate a string with `.` or `?` to the previous element.
 func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 	es := webVtt.VttElements
 	for i := 0; i < len(es)-1; i++ {
