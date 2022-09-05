@@ -86,6 +86,6 @@ func main() {
   "line": "line:0%",
   "text": "the way that we usefunctional components and why you need to know it.♪ I know ♪",
   "separator": "--\u003e"
-}]
+}
 ```
 </div></details>
