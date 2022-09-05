@@ -248,5 +248,54 @@ func TestWebVTTStruct(t *testing.T) {
 			t.Log(out.String())
 		}
 	})
+	t.Run("perfect all processed", func(t *testing.T) {
+		allProcessedDone := []struct {
+			StartTime string
+			EndTime   string
+			Position  string
+			Line      string
+			Text      string
+		}{
+			{
+				StartTime: "00:00:00.350",
+				EndTime:   "00:00:02.770",
+				Position:  "position:63%",
+				Line:      "line:0%",
+				Text:      "- Yo what is going on guys, welcome back to the channel.",
+			},
+			{
+				StartTime: "00:00:02.770",
+				EndTime:   "00:00:08.840",
+				Position:  "position:63%",
+				Line:      "line:0%",
+				Text:      "",
+			},
+			{
+				StartTime: "00:00:08.840",
+				EndTime:   "00:00:12.158",
+				Position:  "position:63%",
+				Line:      "line:0%",
+				Text:      "",
+			},
+		}
+		f, err := ReadFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		w := UnifyTextByTerminalPoint(webVtt)
+		a := DeleteVTTElementStructOfEmptyText(w)
+		e := a.VttElements
+		for i, tt := range allProcessedDone {
+			d := e[i]
+			if tt.StartTime != d.StartTime {
+				t.Errorf("got %s want %s", tt.StartTime, d.StartTime)
+			}
+			if tt.EndTime != d.EndTime {
+				t.Errorf("got %s want %s", tt.EndTime, d.EndTime)
+			}
+		}
+	})
 
 }
