@@ -49,12 +49,6 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 	return &VTTElement{}
 }
 
-//ScanHeaderSplitFunc default split func
-func ScanHeaderSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	advance, token, err = bufio.ScanLines(data, atEOF)
-	return
-}
-
 func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	tokenStr := string(token)
