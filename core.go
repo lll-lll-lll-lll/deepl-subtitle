@@ -3,7 +3,12 @@ package deeplyoutubesubtitle
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
+)
+
+const (
+	EXTVTT = ".vtt"
 )
 
 //UnifyTextByTerminalPoint `.` か `?`を含んでいたら１つ前の構造体に渡すメソッド
@@ -114,7 +119,38 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	wv.VttElements = wv.VttElements[1:]
 }
 
-//ToFile 文字列に戻すメソッド.true: 新しいファイル作成, false: 上書き
-//func (wv *WebVtt) ToFile(fileName string) string {
-//
-//}
+//ToFile 文字列をファイルに戻すメソッド.
+func (wv *WebVtt) ToFile(onlyFileName string) {
+	const (
+		emptyRow = "\n"
+		empty    = " "
+	)
+
+	f, err := os.Create(onlyFileName + EXTVTT)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	// Header
+	_, err = f.WriteString(wv.VTTHeader.Head + emptyRow)
+	check(err)
+	_, err = f.WriteString(wv.VTTHeader.Note + emptyRow)
+	check(err)
+
+	// Body
+	for _, e := range wv.VttElements {
+		// 空行
+		_, err = f.WriteString(emptyRow)
+		// timelineの部分
+		_, err = f.WriteString(e.StartTime + empty + e.Separator + empty +
+			e.EndTime + empty + e.Position + empty + e.Line + emptyRow)
+		_, err = f.WriteString(e.Text + emptyRow)
+	}
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
