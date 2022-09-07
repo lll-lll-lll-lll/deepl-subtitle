@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	ds "github.com/lll-lll-lll-lll/deepl-subtitle"
 	"log"
 )
@@ -17,4 +18,5 @@ func main() {
 	w := ds.UnifyTextByTerminalPoint(webVtt)
 	a := ds.DeleteVTTElementOfEmptyText(w)
 	ds.PrintlnJson(a.VttElements)
+	fmt.Println(a.VTTHeader)
 }

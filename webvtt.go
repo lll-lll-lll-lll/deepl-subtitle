@@ -3,9 +3,7 @@ package deeplyoutubesubtitle
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -49,26 +47,6 @@ func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 // NewVttElement initialize VTTElement
 func (wv *WebVtt) NewVttElement() *VTTElement {
 	return &VTTElement{}
-}
-
-//SkipHeader ignore header of vtt file.
-func (wv *WebVtt) SkipHeader() {
-	var lineNum = 0
-	for wv.VTTScanner.Scan() {
-		text := wv.VTTScanner.Text()
-		switch lineNum {
-		case 0:
-			wv.VTTHeader.Head = text
-		case 1:
-			wv.VTTHeader.Note = text
-		default:
-			break
-		}
-		lineNum++
-	}
-	if err := wv.VTTScanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "reading standard input:", err)
-	}
 }
 
 //ScanHeaderSplitFunc default split func

@@ -40,3 +40,8 @@ func SearchTerminalTokenRegexp(token string) []int {
 	locs := r.FindStringIndex(token)
 	return locs
 }
+
+//CheckHeaderFlag headerならtrue
+func CheckHeaderFlag(token string) bool {
+	return CheckRegexp(`WEBVTT`, token) || CheckRegexp(`Kind: captions`, token)
+}

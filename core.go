@@ -72,7 +72,15 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	for wv.VTTScanner.Scan() {
 		line := wv.VTTScanner.Text()
 		switch {
-
+		case CheckHeaderFlag(line):
+			if wv.VTTHeader.Head != "" && wv.VTTHeader.Note != "" {
+				continue
+			}
+			if line == "WEBVTT" {
+				wv.VTTHeader.Head = line
+			} else {
+				wv.VTTHeader.Note = line
+			}
 		case CheckTimeRegexpFlag(line):
 			if vttElementFlag == 0 {
 				vttElementFlag++
@@ -105,3 +113,8 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	// Skip head element header
 	wv.VttElements = wv.VttElements[1:]
 }
+
+//ToFile 文字列に戻すメソッド.true: 新しいファイル作成, false: 上書き
+//func (wv *WebVtt) ToFile(fileName string) string {
+//
+//}
