@@ -160,28 +160,6 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 	})
 
-	t.Run("SkipHeader method test", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
-		if err != nil {
-			log.Fatal(err)
-		}
-		webVtt := NewWebVtt(f)
-		webVtt.SkipHeader()
-		want := VTTHeader{
-			Head: "WEBVTT",
-			Note: "Kind: captions",
-		}
-
-		if webVtt.VTTHeader.Head != want.Head {
-			t.Errorf("got %s want %s", webVtt.VTTHeader.Head, want.Head)
-		}
-		if webVtt.VTTHeader.Note != want.Note {
-			t.Errorf("got %s want %s", webVtt.VTTHeader.Note, want.Note)
-		}
-		t.Log(webVtt.VTTHeader.Head)
-		t.Log(webVtt.VTTHeader.Note)
-	})
-
 	t.Run("ScanTimeLine method test. create VTT Element struct", func(t *testing.T) {
 		f, err := ReadVTTFile(filename)
 		if err != nil {
@@ -296,6 +274,18 @@ func TestWebVTTStruct(t *testing.T) {
 			}
 		}
 		PrintlnJson(e)
+	})
+
+	t.Run("`ToFile method test`", func(t *testing.T) {
+		f, err := ReadVTTFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		webVtt := NewWebVtt(f)
+		webVtt.ScanLines(ScanSplitFunc)
+		w := UnifyTextByTerminalPoint(webVtt)
+		a := DeleteVTTElementOfEmptyText(w)
+		a.ToFile("test")
 	})
 
 }
