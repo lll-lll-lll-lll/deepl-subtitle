@@ -25,61 +25,6 @@ func haveTerminalPoint(locs []int) bool {
 	return false
 }
 
-func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
-	if untilTerminalCnt == len(vs)-1 {
-		return untilTerminalCnt
-	}
-	e := vs[untilTerminalCnt].Text
-	locs := SearchTerminalTokenRegexp(e)
-	if haveTerminalPoint(locs) == true {
-		untilTerminalCnt++
-		return RecursiveSearchTerminalPoint(vs, untilTerminalCnt)
-	}
-	return untilTerminalCnt
-}
-
-//UnifyTextByTerminalPoint Concatenate a string with `.` or `?` to the previous element.
-func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
-	es := webVtt.VttElements
-	for i := 0; i < len(es)-1; i++ {
-		// どこまでのテキストを繋げてよいかを表す値を取得
-		untilTerminalPointCnt := RecursiveSearchTerminalPoint(es, i)
-		for j := untilTerminalPointCnt; j > i; j-- {
-			currentToken := es[j].Text
-			currentEndTime := es[j].EndTime
-			es[j-1].Text += " " + currentToken
-			es[j-1].EndTime = currentEndTime
-			es[j].Text = ""
-		}
-		
-		if untilTerminalPointCnt != 0 {
-			i = untilTerminalPointCnt
-		}
-	}
-	webVtt.VttElements = es
-	return webVtt
-}
-
-func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
-	var i int
-	f := true
-	es := webVtt.VttElements
-
-	for f {
-		// ここで空のテキストを持つ構造体を削除
-		if es[i].Text == "" {
-			es = append(es[:i], es[i+1:]...)
-			i--
-		}
-		i++
-		if len(es) == i {
-			f = false
-		}
-	}
-	webVtt.VttElements = es
-	return webVtt
-}
-
 func PrintlnJson(elements []*VTTElement) {
 	for _, e := range elements {
 		var out bytes.Buffer

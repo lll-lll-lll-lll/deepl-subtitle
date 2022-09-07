@@ -13,7 +13,7 @@ func main() {
 		return
 	}
 	webVtt := ds.NewWebVtt(f)
-	webVtt.ScanLines(ds.ScanTimeLineSplitFunc)
+	webVtt.ScanLines(ds.ScanSplitFunc)
 	w := ds.UnifyTextByTerminalPoint(webVtt)
 	a := ds.DeleteVTTElementOfEmptyText(w)
 	ds.PrintlnJson(a.VttElements)

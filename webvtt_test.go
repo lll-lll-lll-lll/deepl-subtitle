@@ -188,7 +188,7 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		webVtt.ScanLines(ScanSplitFunc)
 		got := webVtt.VttElements[0]
 		want := &VTTElement{
 			StartTime: "00:00:06.649",
@@ -208,7 +208,7 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		webVtt.ScanLines(ScanSplitFunc)
 		elements := webVtt.VttElements
 		for i, tt := range webvttstructtest {
 			d := elements[i]
@@ -235,7 +235,7 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		webVtt.ScanLines(ScanSplitFunc)
 		elements := webVtt.VttElements
 		for _, e := range elements {
 			var out bytes.Buffer
@@ -282,7 +282,7 @@ func TestWebVTTStruct(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
 		a := DeleteVTTElementOfEmptyText(w)
 		e := a.VttElements

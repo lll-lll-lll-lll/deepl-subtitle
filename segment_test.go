@@ -45,7 +45,7 @@ func TestTextSegment(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
 		got := w.VttElements[0].Text
 		want := "- Yo what is going on guys, welcome back to the channel."
@@ -60,7 +60,7 @@ func TestTextSegment(t *testing.T) {
 			log.Fatal(err)
 		}
 		webVtt := NewWebVtt(f)
-		webVtt.ScanLines(ScanTimeLineSplitFunc)
+		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
 		w = DeleteVTTElementOfEmptyText(w)
 		got := len(w.VttElements)

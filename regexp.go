@@ -34,6 +34,7 @@ func CheckRegexp(pattern, str string) bool {
 	return regexp.MustCompile(pattern).Match([]byte(str))
 }
 
+//SearchTerminalTokenRegexp 「.」か「?」を含んでいるか
 func SearchTerminalTokenRegexp(token string) []int {
 	r, _ := regexp.Compile("[.?]")
 	locs := r.FindStringIndex(token)

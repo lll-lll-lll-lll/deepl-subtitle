@@ -71,56 +71,13 @@ func (wv *WebVtt) SkipHeader() {
 	}
 }
 
-//ScanLines Read the contents of the file and structure the data
-func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
-	vttElement := wv.NewVttElement()
-	wv.VTTScanner.Split(splitFunc)
-	var vttElementFlag int
-
-	for wv.VTTScanner.Scan() {
-		line := wv.VTTScanner.Text()
-		switch {
-
-		case CheckTimeRegexpFlag(line):
-			if vttElementFlag == 0 {
-				vttElementFlag++
-				vttElement.StartTime = line
-			} else {
-				vttElement.EndTime = line
-				vttElementFlag--
-			}
-
-		case CheckSeparatorFlag(line):
-			vttElement.Separator = line
-
-		case CheckPositionFlag(line):
-			vttElement.Position = line
-
-		case CheckLineFlag(line):
-			vttElement.Line = line
-
-		case line == "":
-			wv.AppendVttElement(vttElement)
-			vttElement = wv.NewVttElement()
-		default:
-			vttElement.Text += line
-		}
-	}
-
-	if err := wv.VTTScanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "reading standard input:", err)
-	}
-	// Skip head element header
-	wv.VttElements = wv.VttElements[1:]
-}
-
 //ScanHeaderSplitFunc default split func
 func ScanHeaderSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	return
 }
 
-func ScanTimeLineSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	tokenStr := string(token)
 	if CheckTimeRegexpFlag(tokenStr) || CheckSeparatorFlag(tokenStr) || CheckPositionFlag(tokenStr) || CheckLineFlag(tokenStr) {
