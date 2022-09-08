@@ -11,7 +11,7 @@ const (
 	EXTVTT = ".vtt"
 )
 
-//UnifyTextByTerminalPoint `.` か `?`を含んでいたら１つ前の構造体に渡すメソッド
+//UnifyTextByTerminalPoint `.` か `?`を含んでいたら１つ前の構造体にTextを渡し、EndTimeを更新するメソッド
 func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 	es := webVtt.VttElements
 	for i := 0; i < len(es)-1; i++ {
