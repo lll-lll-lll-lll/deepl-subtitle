@@ -1,4 +1,4 @@
-# unify-vtt-subtitle-text
+# unify-vtt-text
 
 
 ### Example
