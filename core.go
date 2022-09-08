@@ -24,8 +24,8 @@ func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 			es[j-1].EndTime = currentEndTime
 			es[j].Text = ""
 		}
-
-		if untilTerminalPointCnt != 0 {
+		// 文末を表現するトークンを見つけた位置まで移動
+		if untilTerminalPointCnt > 0 {
 			i = untilTerminalPointCnt
 		}
 	}
