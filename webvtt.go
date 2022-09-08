@@ -52,7 +52,7 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	tokenStr := string(token)
-	if CheckTimeRegexpFlag(tokenStr) || CheckSeparatorFlag(tokenStr) || CheckPositionFlag(tokenStr) || CheckLineFlag(tokenStr) {
+	if CheckTimeRegexpFlag(tokenStr) {
 		{
 			advance, token, err = bufio.ScanWords(data, atEOF)
 			return
