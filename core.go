@@ -86,7 +86,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 			} else {
 				wv.VTTHeader.Note = line
 			}
-		case CheckTimeRegexpFlag(line):
+		case CheckStartOrEndTimeFlag(line):
 			if vttElementFlag == 0 {
 				vttElementFlag++
 				vttElement.StartTime = line

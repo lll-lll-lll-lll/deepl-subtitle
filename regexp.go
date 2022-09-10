@@ -4,8 +4,8 @@ import (
 	"regexp"
 )
 
-//CheckTimeRegexpFlag Check if the first 2 characters are 0~9 of int
-func CheckTimeRegexpFlag(token string) bool {
+//CheckStartOrEndTimeFlag Check if the first 2 characters are 0~9 of int
+func CheckStartOrEndTimeFlag(token string) bool {
 	return CheckRegexp(`^[0-9]+`, token)
 }
 

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	ds "github.com/lll-lll-lll-lll/deepl-subtitle"
 	"log"
+
+	ds "github.com/lll-lll-lll-lll/deepl-subtitle"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 	webVtt.ScanLines(ds.ScanSplitFunc)
 	w := ds.UnifyTextByTerminalPoint(webVtt)
 	a := ds.DeleteVTTElementOfEmptyText(w)
+	// a.ToFile("testoutput")
 	ds.PrintlnJson(a.VttElements)
 	fmt.Println(a.VTTHeader)
 }
