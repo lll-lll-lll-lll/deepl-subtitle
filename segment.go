@@ -17,7 +17,7 @@ import (
 // 	return token, previousString, backString, terminal, false
 // }
 
-// locsに値がない場合「.」もしくは「?」が含まれていないことを示す
+// SearchTerminalTokenRegexpで返ってきたlocs内に「.」もしくは「?」の位置を示す値が入っているか
 func haveTerminalPoint(locs []int) bool {
 	if len(locs) == 0 {
 		return true
