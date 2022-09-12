@@ -1,5 +1,7 @@
 # unify-vtt-text
 
+## 前提
+[yt-dlp](https://github.com/yt-dlp/yt-dlp)パッケージで生成したvttファイルを前提にしてます
 
 ### Example
 
