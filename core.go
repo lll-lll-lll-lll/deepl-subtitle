@@ -16,17 +16,17 @@ func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 	es := webVtt.VttElements
 	for i := 0; i < len(es)-1; i++ {
 		// どこまでのテキストを繋げてよいかを表す値を取得
-		untilTerminalPointCnt := RecursiveSearchTerminalPoint(es, i)
-		for j := untilTerminalPointCnt; j > i; j-- {
-			currentToken := es[j].Text
-			currentEndTime := es[j].EndTime
-			es[j-1].Text += " " + currentToken
-			es[j-1].EndTime = currentEndTime
+		cnt := RecursiveSearchTerminalPoint(es, i)
+		for j := cnt; j > i; j-- {
+			ct := es[j].Text
+			cet := es[j].EndTime
+			es[j-1].Text += " " + ct
+			es[j-1].EndTime = cet
 			es[j].Text = ""
 		}
 		// 文末を表現するトークンを見つけた位置まで移動
-		if untilTerminalPointCnt > 0 {
-			i = untilTerminalPointCnt
+		if cnt > 0 {
+			i = cnt
 		}
 	}
 	webVtt.VttElements = es
