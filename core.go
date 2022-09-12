@@ -61,7 +61,13 @@ func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
 	}
 	e := vs[untilTerminalCnt].Text
 	locs := SearchTerminalTokenRegexp(e)
-	if haveTerminalPoint(locs) == true {
+	f := func(locs []int) bool {
+		if len(locs) == 0 {
+			return true
+		}
+		return false
+	}
+	if f(locs) == true {
 		untilTerminalCnt++
 		return RecursiveSearchTerminalPoint(vs, untilTerminalCnt)
 	}

@@ -8,26 +8,13 @@ import (
 	"strings"
 )
 
+type WebVttString string
+
 type WebVtt struct {
 	VttFile     string         `json:"file"`
 	VttElements []*VTTElement  `json:"vtt_elements"`
 	VTTHeader   *VTTHeader     `json:"header"`
 	VTTScanner  *bufio.Scanner `json:"scanner"`
-}
-
-func NewWebVtt(file string) *WebVtt {
-	scanner := bufio.NewScanner(strings.NewReader(file))
-	header := NewVTTHeader()
-	return &WebVtt{VttFile: file, VTTScanner: scanner, VTTHeader: header}
-}
-
-type VTTHeader struct {
-	Head string `json:"head"`
-	Note string `json:"note"`
-}
-
-func NewVTTHeader() *VTTHeader {
-	return &VTTHeader{}
 }
 
 type VTTElement struct {
@@ -39,14 +26,29 @@ type VTTElement struct {
 	Separator string `json:"separator"`
 }
 
+type VTTHeader struct {
+	Head string `json:"head"`
+	Note string `json:"note"`
+}
+
+func NewWebVtt(file WebVttString) *WebVtt {
+	f := string(file)
+	scanner := bufio.NewScanner(strings.NewReader(f))
+	header := NewVTTHeader()
+	return &WebVtt{VttFile: f, VTTScanner: scanner, VTTHeader: header}
+}
+
+func NewVTTHeader() *VTTHeader {
+	return &VTTHeader{}
+}
+
+func (wv *WebVtt) NewVttElement() *VTTElement {
+	return &VTTElement{}
+}
+
 //AppendVttElement append VTTElement to WebVtt
 func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 	wv.VttElements = append(wv.VttElements, vtt)
-}
-
-// NewVttElement initialize VTTElement
-func (wv *WebVtt) NewVttElement() *VTTElement {
-	return &VTTElement{}
 }
 
 func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -64,7 +66,7 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 }
 
 //ReadVTTFile use when WebVTT struct is initialized.
-func ReadVTTFile(filename string) (string, error) {
+func ReadVTTFile(filename string) (WebVttString, error) {
 	ext := filepath.Ext(filename)
 	if ext != ".vtt" {
 		return "", errors.New("your input file extension is not `.vtt`. check your file extension")
@@ -77,5 +79,5 @@ func ReadVTTFile(filename string) (string, error) {
 	if string(bytesFile) == "" {
 		return "", errors.New("file content is empty")
 	}
-	return string(bytesFile), nil
+	return WebVttString(bytesFile), nil
 }
