@@ -54,7 +54,7 @@ func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	tokenStr := string(token)
-	// CheckTimeRegexpFlagでtrueが走るとその行を空白で単語区切りにする。トークン区切りになった他の`-->`や`position...`を認識させる
+	// CheckTimeRegexpFlagでtrueが走るとその行を空白で単語区切りにする。トークン区切りになった他の`-->`や`position...`を他のフラグで検索
 	if CheckStartOrEndTimeFlag(tokenStr) || CheckSeparatorFlag(tokenStr) || CheckPositionFlag(tokenStr) || CheckLineFlag(tokenStr) {
 		{
 			advance, token, err = bufio.ScanWords(data, atEOF)
