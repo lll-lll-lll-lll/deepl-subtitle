@@ -11,29 +11,29 @@ const (
 	EXTVTT = ".vtt"
 )
 
-//UnifyTextByTerminalPoint `.` か `?`を含んでいたら１つ前の構造体にTextを渡し、EndTimeを更新するメソッド
+// UnifyTextByTerminalPoint `.` か `?`を含んでいたら１つ前の構造体にTextを渡し、EndTimeを更新するメソッド
 func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
-	es := webVtt.VttElements
-	for i := 0; i < len(es)-1; i++ {
+	ves := webVtt.VttElements
+	for i := 0; i < len(ves)-1; i++ {
 		// どこまでのテキストを繋げてよいかを表す値を取得
-		cnt := RecursiveSearchTerminalPoint(es, i)
-		for j := cnt; j > i; j-- {
-			ct := es[j].Text
-			cet := es[j].EndTime
-			es[j-1].Text += " " + ct
-			es[j-1].EndTime = cet
-			es[j].Text = ""
+		untilTerminalPointCnt := RecursiveSearchTerminalPoint(ves, i)
+		for j := untilTerminalPointCnt; j > i; j-- {
+			t := ves[j].Text
+			e := ves[j].EndTime
+			ves[j-1].Text += " " + t
+			ves[j-1].EndTime = e
+			ves[j].Text = ""
 		}
 		// 文末を表現するトークンを見つけた位置まで移動
-		if cnt > 0 {
-			i = cnt
+		if untilTerminalPointCnt > 0 {
+			i = untilTerminalPointCnt
 		}
 	}
-	webVtt.VttElements = es
+	webVtt.VttElements = ves
 	return webVtt
 }
 
-//DeleteVTTElementOfEmptyText テキストが空の構造体を削除するメソッド
+// DeleteVTTElementOfEmptyText テキストが空の構造体を削除するメソッド
 func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
 	var i int
 	f := true
@@ -43,9 +43,9 @@ func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
 		// ここで空のテキストを持つ構造体を削除
 		if es[i].Text == "" {
 			es = append(es[:i], es[i+1:]...)
-			i--
+			//i--
 		}
-		i++
+		//i++
 		if len(es) == i {
 			f = false
 		}
@@ -54,7 +54,7 @@ func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
 	return webVtt
 }
 
-//RecursiveSearchTerminalPoint SearchTerminalTokenRegexp メソッドで文末トークンが見つかるまでの構造体の個数を返す
+// RecursiveSearchTerminalPoint SearchTerminalTokenRegexp メソッドで文末トークンが見つかるまでの構造体の個数を返す
 func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
 	if untilTerminalCnt == len(vs)-1 {
 		return untilTerminalCnt
@@ -74,7 +74,7 @@ func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
 	return untilTerminalCnt
 }
 
-//ScanLines 一行ずつ読み込んで構造体を作成するメソッド
+// ScanLines 一行ずつ読み込んで構造体を作成するメソッド
 func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	vttElement := wv.NewVttElement()
 	wv.VTTScanner.Split(splitFunc)
@@ -125,7 +125,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	wv.VttElements = wv.VttElements[1:]
 }
 
-//ToFile 文字列をファイルに戻すメソッド.
+// ToFile 文字列をファイルに戻すメソッド.
 func (wv *WebVtt) ToFile(onlyFileName string) {
 	const (
 		emptyRow = "\n"
@@ -136,7 +136,6 @@ func (wv *WebVtt) ToFile(onlyFileName string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 
 	// Header
 	_, err = f.WriteString(wv.VTTHeader.Head + emptyRow)

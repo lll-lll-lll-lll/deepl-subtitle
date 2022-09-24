@@ -12,7 +12,6 @@ func main() {
 	f, err := ds.ReadVTTFile(filename)
 	if err != nil {
 		log.Fatal(err)
-		return
 	}
 	webVtt := ds.NewWebVtt(f)
 	webVtt.ScanLines(ds.ScanSplitFunc)
