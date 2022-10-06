@@ -46,7 +46,7 @@ func (wv *WebVtt) NewVttElement() *VTTElement {
 	return &VTTElement{}
 }
 
-//AppendVttElement append VTTElement to WebVtt
+// AppendVttElement append VTTElement to WebVtt
 func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
 	wv.VttElements = append(wv.VttElements, vtt)
 }
@@ -65,7 +65,7 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	return
 }
 
-//ReadVTTFile use when WebVTT struct is initialized.
+// ReadVTTFile use when WebVTT struct is initialized.
 func ReadVTTFile(filename string) (WebVttString, error) {
 	ext := filepath.Ext(filename)
 	if ext != ".vtt" {
