@@ -43,9 +43,9 @@ func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
 		// ここで空のテキストを持つ構造体を削除
 		if es[i].Text == "" {
 			es = append(es[:i], es[i+1:]...)
-			//i--
+			i--
 		}
-		//i++
+		i++
 		if len(es) == i {
 			f = false
 		}
