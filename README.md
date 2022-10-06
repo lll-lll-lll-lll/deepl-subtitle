@@ -131,3 +131,6 @@ youtubeの翻訳で時々意味不明な日本語訳が返ってくる時があ�
 
 
 
+# how to download vtt file
+
+`youtube-dl --skip-download --write-sub  https://youtu.be/YS4e4q9oBaU `
