@@ -93,6 +93,6 @@ Options:
   -help or h 	 		    help
   -version            		now version
   -file=<{filename}.vtt>    vtt file name
-  -path=<{filename}.vtt>    shaped vtt file
+  -path=<{filename}.vtt>    shaped vtt file path
   -pj                       print json console
 `
