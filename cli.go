@@ -92,5 +92,6 @@ Usage: %s [options] slug path
 Options:
   -help or h 	 		    help
   -version            		now version
-  -file=<option>      		vtt file name
+  -file=<{filename}.vtt>    vtt file name
+  -path=<{filename}.vtt>    shaped vtt file
 `
