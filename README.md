@@ -2,6 +2,25 @@
 
 # CLI
 
+```md
+Usage: vreader [options] 
+
+Options:
+  -help or h 	 		        help
+  -version            		 now version
+  -file=<{filename}.vtt>    vtt file name
+  -path=<{filename}.vtt>    shaped vtt file
+  -pj                       print json in console
+```
+
+### CLI Example
+
+```sh
+ vreader  -file d.vtt -pj -path shapedfile.vtt
+```
+
+
+
 ## Install
 ```sh
 brew tap lll-lll-lll-lll/vreader
