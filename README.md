@@ -2,6 +2,17 @@
 
 # CLI
 
+
+## Install
+```sh
+brew tap lll-lll-lll-lll/vreader
+```
+
+```sh
+brew install vreader
+```
+
+
 ```md
 Usage: vreader [options] 
 
@@ -9,7 +20,7 @@ Options:
   -help or h 	 		        help
   -version            		 now version
   -file=<{filename}.vtt>    vtt file name
-  -path=<{filename}.vtt>    shaped vtt file
+  -path=<{filename}.vtt>    File name of destination
   -pj                       print json in console
 ```
 
@@ -20,15 +31,6 @@ Options:
 ```
 
 
-
-## Install
-```sh
-brew tap lll-lll-lll-lll/vreader
-```
-
-```sh
-brew install vreader
-```
 
 ### Example
 
