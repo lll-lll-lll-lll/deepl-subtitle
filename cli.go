@@ -94,4 +94,5 @@ Options:
   -version            		now version
   -file=<{filename}.vtt>    vtt file name
   -path=<{filename}.vtt>    shaped vtt file
+  -pj                       print json console
 `
