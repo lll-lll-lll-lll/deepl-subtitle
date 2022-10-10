@@ -1,5 +1,15 @@
 # unify-vtt-text
 
+# CLI
+
+## Install
+```sh
+brew tap lll-lll-lll-lll/vreader
+```
+
+```sh
+brew install vreader
+```
 
 ### Example
 
