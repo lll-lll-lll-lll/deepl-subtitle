@@ -16,7 +16,7 @@ Options:
 ### CLI Example
 
 ```sh
- vreader  -file d.vtt -pj -path shapedfile.vtt
+ vreader  -file example.vtt -pj -path shapedfile.vtt
 ```
 
 
