@@ -140,17 +140,6 @@ the way that we usefunctional components and why you need to know it.♪ I know 
 ```
 </div></details>
 
-## 作ってみた背景
-youtubeの翻訳で時々意味不明な日本語訳が返ってくる時がある。これは翻訳のレベルが原因なのか<br>
-一定の時間内に含まれるテキストが途中で途切れてしまっているのが原因なのか。<br>
-もしくは、自動生成されている字幕ファイルだからか(もしこれなら、このpkg作り損)<br>
-おそらく翻訳のレベルに問題はないが、途中で区切られてしまっているのが原因で意味不明な翻訳になってしまっているんじゃないかと思った。<br>
-
-
-## 感想
-**肝となる機能**<br>
-- bufio pkgで一行ずつ読み込み、正規表現でvttファイルの時間やテキストを抽出し、構造体に落とし込んだ<br>
-- `RecursiveSearchTerminalPoint()`メソッドで再帰的に文末を表現するトークンを探させ、見つかった位置から現在の位置のトークンに向けてテキストを追加しend_timeを更新していく。<br>
 
 **これから実装したいこと**<br>
 - テキスト内に`○○○○○.○○○`のようにテキストが途中で区切られて次の文章が含まれている場合、「.」とそれより前のテキストだけ前の構造体に接続する実装
@@ -160,6 +149,6 @@ youtubeの翻訳で時々意味不明な日本語訳が返ってくる時があ�
 
 
 
-# how to download vtt file
+# how to download vtt file (Youtube)
 
 `youtube-dl --skip-download --write-sub {YoutubeURL}`
