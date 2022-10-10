@@ -3,7 +3,7 @@ package deeplyoutubesubtitle
 import (
 	"bufio"
 	"errors"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -72,7 +72,7 @@ func ReadVTTFile(filename string) (WebVttString, error) {
 		return "", errors.New("your input file extension is not `.vtt`. check your file extension")
 	}
 
-	bytesFile, err := ioutil.ReadFile(filename)
+	bytesFile, err := os.ReadFile(filename)
 	if err != nil {
 		return "", nil
 	}

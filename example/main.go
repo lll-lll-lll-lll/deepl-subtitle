@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	filename := "go_learn.vtt"
+	filename := "example.vtt"
 	fmt.Println("start reading file.")
 	f, err := ds.ReadVTTFile(filename)
 	if err != nil {
@@ -22,8 +22,9 @@ func main() {
 	fmt.Println("start unify text by terminal point")
 	w := ds.UnifyTextByTerminalPoint(webVtt)
 	fmt.Println("start delete empty text of vtt element")
-	_ = ds.DeleteVTTElementOfEmptyText(w)
+	ds.DeleteVTTElementOfEmptyText(w)
 	// a.ToFile("testoutput")
+	ds.PrintlnJson(w.VttElements)
 	fmt.Println("start calculate untile end")
 	fmt.Println(time.Since(start).Seconds())
 }

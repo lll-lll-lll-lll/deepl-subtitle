@@ -1,4 +1,4 @@
-package main
+package deeplyoutubesubtitle
 
 import (
 	"bytes"
@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"io"
 	"log"
-
-	ds "github.com/lll-lll-lll-lll/deepl-subtitle"
 )
+
+const Version string = "v0.1.0"
 
 const (
 	ExitCodeOk             = 0
@@ -28,10 +28,12 @@ func (c *CLI) Run(args []string) int {
 	var (
 		version bool
 		file    string
-		vttfile ds.WebVttString
+		vttfile WebVttString
 		path    string
 		err     error
+		pj      bool
 	)
+	webVtt := &WebVtt{}
 
 	flags := flag.NewFlagSet("vttreader", flag.ContinueOnError)
 	flags.SetOutput(c.errStream)
@@ -40,6 +42,8 @@ func (c *CLI) Run(args []string) int {
 	}
 	flags.BoolVar(&version, "version", false, "print version")
 	flags.StringVar(&file, "file", "", "vtt file")
+	flags.StringVar(&path, "path", "", "save path")
+	flags.BoolVar(&pj, "pj", false, "print vtt elements json format")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
@@ -50,22 +54,23 @@ func (c *CLI) Run(args []string) int {
 		return ExitCodeOk
 	}
 	if file != "" {
-		vttfile, err = ds.ReadVTTFile(file)
+		vttfile, err = ReadVTTFile(file)
 		if err != nil {
 			log.Fatal(err)
 		}
+		webVtt = NewWebVtt(vttfile)
+		webVtt.ScanLines(ScanSplitFunc)
+		w := UnifyTextByTerminalPoint(webVtt)
+		DeleteVTTElementOfEmptyText(w)
 	}
-	webVtt := ds.NewWebVtt(vttfile)
-	webVtt.ScanLines(ds.ScanSplitFunc)
-	w := ds.UnifyTextByTerminalPoint(webVtt)
-	vtt := ds.DeleteVTTElementOfEmptyText(w)
 
 	if path != "" {
-		vtt.ToFile(path)
-		return ExitCodeOk
+		webVtt.ToFile(path)
 	}
 
-	defer ds.PrintlnJson(vtt.VttElements)
+	if pj {
+		PrintlnJson(webVtt.VttElements)
+	}
 
 	return ExitCodeOk
 }

@@ -34,7 +34,7 @@ func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 }
 
 // DeleteVTTElementOfEmptyText テキストが空の構造体を削除するメソッド
-func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
+func DeleteVTTElementOfEmptyText(webVtt *WebVtt) {
 	var i int
 	f := true
 	es := webVtt.VttElements
@@ -51,7 +51,6 @@ func DeleteVTTElementOfEmptyText(webVtt *WebVtt) *WebVtt {
 		}
 	}
 	webVtt.VttElements = es
-	return webVtt
 }
 
 // RecursiveSearchTerminalPoint SearchTerminalTokenRegexp メソッドで文末トークンが見つかるまでの構造体の個数を返す
@@ -132,7 +131,7 @@ func (wv *WebVtt) ToFile(onlyFileName string) {
 		empty    = " "
 	)
 
-	f, err := os.Create(onlyFileName + EXTVTT)
+	f, err := os.Create(onlyFileName)
 	if err != nil {
 		log.Fatal(err)
 	}

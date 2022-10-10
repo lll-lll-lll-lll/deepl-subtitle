@@ -1,10 +1,11 @@
 package main
 
-import "os"
-
-const Version string = "v0.1.0"
+import (
+	ds "github.com/lll-lll-lll-lll/deepl-subtitle"
+	"os"
+)
 
 func main() {
-	cli := NewCLI(os.Stdout, os.Stderr)
+	cli := ds.NewCLI(os.Stdout, os.Stderr)
 	os.Exit(cli.Run(os.Args))
 }

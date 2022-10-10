@@ -21,7 +21,7 @@ import (
 //	}
 //}
 
-//TestWebVTTStruct Test method and property of WebVtt struct
+// TestWebVTTStruct Test method and property of WebVtt struct
 func TestWebVTTStruct(t *testing.T) {
 	webvttstructtest := []struct {
 		StartTime string
@@ -262,8 +262,8 @@ func TestWebVTTStruct(t *testing.T) {
 		webVtt := NewWebVtt(f)
 		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
-		a := DeleteVTTElementOfEmptyText(w)
-		e := a.VttElements
+		DeleteVTTElementOfEmptyText(w)
+		e := w.VttElements
 		for i, tt := range allProcessedDone {
 			d := e[i]
 			if tt.StartTime != d.StartTime {
@@ -284,8 +284,8 @@ func TestWebVTTStruct(t *testing.T) {
 		webVtt := NewWebVtt(f)
 		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyTextByTerminalPoint(webVtt)
-		a := DeleteVTTElementOfEmptyText(w)
-		a.ToFile("test")
+		DeleteVTTElementOfEmptyText(w)
+		w.ToFile("test")
 	})
 
 }
