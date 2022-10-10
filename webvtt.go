@@ -74,7 +74,7 @@ func ReadVTTFile(filename string) (WebVttString, error) {
 
 	bytesFile, err := os.ReadFile(filename)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	if string(bytesFile) == "" {
 		return "", errors.New("file content is empty")
