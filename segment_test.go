@@ -1,4 +1,4 @@
-package deeplyoutubesubtitle
+package main
 
 import (
 	"log"
