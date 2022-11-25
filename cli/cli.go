@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"flag"
@@ -20,7 +20,7 @@ type CLI struct {
 	outStream, errStream io.Writer
 }
 
-func NewCLI(outStream io.Writer, errStream io.Writer) *CLI {
+func New(outStream io.Writer, errStream io.Writer) *CLI {
 	return &CLI{outStream: outStream, errStream: errStream}
 }
 

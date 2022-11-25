@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"bytes"
@@ -24,7 +24,7 @@ func TestCli(t *testing.T) {
 	t.Run("version test cli", func(t *testing.T) {
 		outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 		cli := &CLI{outStream: outStream, errStream: errStream}
-		args := strings.Split("vttreader --file example.vtt", " ")
+		args := strings.Split("vttreader --file ../data/example.vtt", " ")
 		status := cli.Run(args)
 		if status != ExitCodeOk {
 			t.Errorf("ExitStatus=%d, want %d", status, ExitCodeOk)
@@ -38,7 +38,7 @@ func TestCli(t *testing.T) {
 	t.Run("print json test cli", func(t *testing.T) {
 		outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 		cli := &CLI{outStream: outStream, errStream: errStream}
-		args := strings.Split("vttreader --file example.vtt --pj", " ")
+		args := strings.Split("vttreader --file ../data/example.vtt --pj", " ")
 		status := cli.Run(args)
 		if status != ExitCodeOk {
 			t.Errorf("ExitStatus=%d, want %d", status, ExitCodeOk)
@@ -51,7 +51,7 @@ func TestCli(t *testing.T) {
 	t.Run("save recreated vttfile test cli", func(t *testing.T) {
 		outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 		cli := &CLI{outStream: outStream, errStream: errStream}
-		args := strings.Split("vttreader --file example.vtt --path test.vtt ", " ")
+		args := strings.Split("vttreader --file ../data/example.vtt --path test.vtt ", " ")
 		status := cli.Run(args)
 		if status != ExitCodeOk {
 			t.Errorf("ExitStatus=%d, want %d", status, ExitCodeOk)
