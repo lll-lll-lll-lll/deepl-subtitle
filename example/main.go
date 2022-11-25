@@ -22,7 +22,7 @@ func main() {
 	fmt.Println("start unify text by terminal point")
 	w := ds.UnifyText(webVtt)
 	fmt.Println("start delete empty text of vtt element")
-	ds.DeleteVTTElementOfEmptyText(w)
+	ds.DeleteElementOfEmptyText(w)
 	// a.ToFile("testoutput")
 	ds.PrintlnJson(w.Elements)
 	fmt.Println("start calculate untile end")

@@ -33,8 +33,8 @@ func UnifyText(webVtt *WebVtt) *WebVtt {
 	return webVtt
 }
 
-// DeleteVTTElementOfEmptyText テキストが空の構造体を削除するメソッド
-func DeleteVTTElementOfEmptyText(webVtt *WebVtt) {
+// DeleteElementOfEmptyText テキストが空の構造体を削除するメソッド
+func DeleteElementOfEmptyText(webVtt *WebVtt) {
 	var i int
 	f := true
 	es := webVtt.Elements
@@ -150,6 +150,9 @@ func (wv *WebVtt) ToFile(onlyFileName string) {
 		_, err = f.WriteString(e.StartTime + empty + e.Separator + empty +
 			e.EndTime + empty + e.Position + empty + e.Line + emptyRow)
 		_, err = f.WriteString(e.Text + emptyRow)
+	}
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 

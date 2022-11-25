@@ -61,7 +61,7 @@ func (c *CLI) Run(args []string) int {
 		webVtt = New(vttfile)
 		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyText(webVtt)
-		DeleteVTTElementOfEmptyText(w)
+		DeleteElementOfEmptyText(w)
 	}
 
 	if path != "" {

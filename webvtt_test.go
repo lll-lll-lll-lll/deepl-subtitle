@@ -262,7 +262,7 @@ func TestWebVTTStruct(t *testing.T) {
 		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyText(webVtt)
-		DeleteVTTElementOfEmptyText(w)
+		DeleteElementOfEmptyText(w)
 		e := w.Elements
 		for i, tt := range allProcessedDone {
 			d := e[i]
@@ -284,7 +284,7 @@ func TestWebVTTStruct(t *testing.T) {
 		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
 		w := UnifyText(webVtt)
-		DeleteVTTElementOfEmptyText(w)
+		DeleteElementOfEmptyText(w)
 		w.ToFile("test")
 	})
 
