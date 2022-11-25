@@ -55,7 +55,7 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	tokenStr := string(token)
 	// CheckTimeRegexpFlagでtrueが走るとその行を空白で単語区切りにする。トークン区切りになった他の`-->`や`position...`を他のフラグで検索
-	if CheckStartOrEndTimeFlag(tokenStr) || CheckSeparatorFlag(tokenStr) || CheckPositionFlag(tokenStr) || CheckLineFlag(tokenStr) {
+	if CheckStartOrEndTime(tokenStr) || CheckSeparator(tokenStr) || CheckPosition(tokenStr) || CheckLine(tokenStr) {
 		{
 			advance, token, err = bufio.ScanWords(data, atEOF)
 			return

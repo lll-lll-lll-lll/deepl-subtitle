@@ -59,7 +59,7 @@ func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
 		return untilTerminalCnt
 	}
 	e := vs[untilTerminalCnt].Text
-	locs := SearchTerminalTokenRegexp(e)
+	locs := SearchTerminalToken(e)
 	f := func(locs []int) bool {
 		if len(locs) == 0 {
 			return true
@@ -82,7 +82,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	for wv.Scanner.Scan() {
 		line := wv.Scanner.Text()
 		switch {
-		case CheckHeaderFlag(line):
+		case CheckHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
 				continue
 			}
@@ -91,7 +91,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 			} else {
 				wv.Header.Note = line
 			}
-		case CheckStartOrEndTimeFlag(line):
+		case CheckStartOrEndTime(line):
 			if vttElementFlag == 0 {
 				vttElementFlag++
 				vttElement.StartTime = line
@@ -100,13 +100,13 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 				vttElementFlag--
 			}
 
-		case CheckSeparatorFlag(line):
+		case CheckSeparator(line):
 			vttElement.Separator = line
 
-		case CheckPositionFlag(line):
+		case CheckPosition(line):
 			vttElement.Position = line
 
-		case CheckLineFlag(line):
+		case CheckLine(line):
 			vttElement.Line = line
 
 		case line == "":

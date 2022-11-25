@@ -4,44 +4,44 @@ import (
 	"regexp"
 )
 
-// CheckStartOrEndTimeFlag Check if the first 2 characters are 0~9 of int
-func CheckStartOrEndTimeFlag(token string) bool {
-	return CheckRegexp(`^[0-9]+`, token)
+// CheckStartOrEndTime Check if the first 2 characters are 0~9 of int
+func CheckStartOrEndTime(token string) bool {
+	return CheckReg(`^[0-9]+`, token)
 }
 
-// CheckSeparatorFlag // Check if the first character is `-->`
-func CheckSeparatorFlag(token string) bool {
-	return CheckRegexp(`^-->`, token)
+// CheckSeparator // Check if the first character is `-->`
+func CheckSeparator(token string) bool {
+	return CheckReg(`^-->`, token)
 }
 
-// CheckPositionFlag Check if the first character is `position:...`
-func CheckPositionFlag(token string) bool {
-	return CheckRegexp(`^position:[0-9]+%`, token)
+// CheckPosition Check if the first character is `position:...`
+func CheckPosition(token string) bool {
+	return CheckReg(`^position:[0-9]+%`, token)
 }
 
-// CheckLineFlag Check if the first character is `line:...`
-func CheckLineFlag(token string) bool {
-	return CheckRegexp(`^line:[0-9]+%`, token)
+// CheckLine Check if the first character is `line:...`
+func CheckLine(token string) bool {
+	return CheckReg(`^line:[0-9]+%`, token)
 }
 
-// CheckTerminalFlag Check if the en character is `.` or `?`
-func CheckTerminalFlag(token string) bool {
-	return CheckRegexp(`.`, token) || CheckRegexp(`?`, token)
+// CheckTerminal Check if the en character is `.` or `?`
+func CheckTerminal(token string) bool {
+	return CheckReg(`.`, token) || CheckReg(`?`, token)
 }
 
-// CheckRegexp Pattern detection of regular expression things method
-func CheckRegexp(pattern, str string) bool {
+// CheckReg Pattern detection of regular expression things method
+func CheckReg(pattern, str string) bool {
 	return regexp.MustCompile(pattern).Match([]byte(str))
 }
 
-// SearchTerminalTokenRegexp 「.」か「?」を含んでいるか
-func SearchTerminalTokenRegexp(token string) []int {
+// SearchTerminalToken 「.」か「?」を含んでいるか
+func SearchTerminalToken(token string) []int {
 	r, _ := regexp.Compile("[.?]")
 	locs := r.FindStringIndex(token)
 	return locs
 }
 
-// CheckHeaderFlag headerならtrue
-func CheckHeaderFlag(token string) bool {
-	return CheckRegexp(`WEBVTT`, token) || CheckRegexp(`Kind: captions`, token)
+// CheckHeader headerならtrue
+func CheckHeader(token string) bool {
+	return CheckReg(`WEBVTT`, token) || CheckReg(`Kind: captions`, token)
 }

@@ -9,7 +9,7 @@ func TestTextSegment(t *testing.T) {
 	token := "you need to know it, ♪ I know ♪"
 	filename := "example.vtt"
 	t.Run("get 「.」and 「?」", func(t *testing.T) {
-		got := CheckTerminalFlag(token)
+		got := CheckTerminal(token)
 		want := true
 		if got != want {
 			t.Errorf("got %v want %v", got, want)
