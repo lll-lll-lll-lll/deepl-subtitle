@@ -1,10 +1,12 @@
-package main
+package webvtt
 
 import (
 	"bufio"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/lll-lll-lll-lll/deepl-subtitle/sub"
 )
 
 const (
@@ -59,7 +61,7 @@ func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
 		return untilTerminalCnt
 	}
 	e := vs[untilTerminalCnt].Text
-	locs := SearchTerminalToken(e)
+	locs := sub.SearchTerminalToken(e)
 	f := func(locs []int) bool {
 		if len(locs) == 0 {
 			return true
@@ -82,7 +84,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	for wv.Scanner.Scan() {
 		line := wv.Scanner.Text()
 		switch {
-		case CheckHeader(line):
+		case sub.CheckHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
 				continue
 			}
@@ -91,7 +93,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 			} else {
 				wv.Header.Note = line
 			}
-		case CheckStartOrEndTime(line):
+		case sub.CheckStartOrEndTime(line):
 			if vttElementFlag == 0 {
 				vttElementFlag++
 				vttElement.StartTime = line
@@ -100,13 +102,13 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 				vttElementFlag--
 			}
 
-		case CheckSeparator(line):
+		case sub.CheckSeparator(line):
 			vttElement.Separator = line
 
-		case CheckPosition(line):
+		case sub.CheckPosition(line):
 			vttElement.Position = line
 
-		case CheckLine(line):
+		case sub.CheckLine(line):
 			vttElement.Line = line
 
 		case line == "":

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"log"
+
+	"github.com/lll-lll-lll-lll/deepl-subtitle/webvtt"
 )
 
 const Version string = "v0.1.0"
@@ -28,12 +28,12 @@ func (c *CLI) Run(args []string) int {
 	var (
 		version bool
 		file    string
-		vttfile WebVttString
+		vttfile webvtt.WebVttString
 		path    string
 		err     error
 		pj      bool
 	)
-	webVtt := &WebVtt{}
+	webVtt := &webvtt.WebVtt{}
 
 	flags := flag.NewFlagSet("vttreader", flag.ContinueOnError)
 	flags.SetOutput(c.errStream)
@@ -54,14 +54,14 @@ func (c *CLI) Run(args []string) int {
 		return ExitCodeOk
 	}
 	if file != "" {
-		vttfile, err = ReadVTT(file)
+		vttfile, err = webvtt.ReadVTT(file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt = New(vttfile)
-		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyText(webVtt)
-		DeleteElementOfEmptyText(w)
+		webVtt = webvtt.New(vttfile)
+		webVtt.ScanLines(webvtt.ScanSplitFunc)
+		w := webvtt.UnifyText(webVtt)
+		webvtt.DeleteElementOfEmptyText(w)
 	}
 
 	if path != "" {
@@ -69,21 +69,10 @@ func (c *CLI) Run(args []string) int {
 	}
 
 	if pj {
-		PrintlnJson(webVtt.Elements)
+		webvtt.PrintlnJson(webVtt.Elements)
 	}
 
 	return ExitCodeOk
-}
-
-func printJsonAny[S ~[]e, e any](c *CLI, f S) {
-	for _, e := range f {
-		b, _ := json.Marshal(e)
-		var out bytes.Buffer
-		if err := json.Indent(&out, b, "", "  "); err != nil {
-			fmt.Fprintf(c.errStream, "filter err %s\n", err)
-		}
-		fmt.Fprintf(c.errStream, "%s\n", out.String())
-	}
 }
 
 const usage = `

@@ -5,26 +5,26 @@ import (
 	"log"
 	"time"
 
-	ds "github.com/lll-lll-lll-lll/deepl-subtitle"
+	"github.com/lll-lll-lll-lll/deepl-subtitle/webvtt"
 )
 
 func main() {
-	filename := "example.vtt"
+	filename := "data/example.vtt"
 	fmt.Println("start reading file.")
-	f, err := ds.ReadVTT(filename)
+	f, err := webvtt.ReadVTT(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	webVtt := ds.New(f)
+	webVtt := webvtt.New(f)
 	start := time.Now()
 	fmt.Println("start scanning file")
-	webVtt.ScanLines(ds.ScanSplitFunc)
+	webVtt.ScanLines(webvtt.ScanSplitFunc)
 	fmt.Println("start unify text by terminal point")
-	w := ds.UnifyText(webVtt)
+	w := webvtt.UnifyText(webVtt)
 	fmt.Println("start delete empty text of vtt element")
-	ds.DeleteElementOfEmptyText(w)
+	webvtt.DeleteElementOfEmptyText(w)
 	// a.ToFile("testoutput")
-	ds.PrintlnJson(w.Elements)
+	webvtt.PrintlnJson(w.Elements)
 	fmt.Println("start calculate untile end")
 	fmt.Println(time.Since(start).Seconds())
 }

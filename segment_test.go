@@ -3,13 +3,16 @@ package main
 import (
 	"log"
 	"testing"
+
+	"github.com/lll-lll-lll-lll/deepl-subtitle/sub"
+	"github.com/lll-lll-lll-lll/deepl-subtitle/webvtt"
 )
 
 func TestTextSegment(t *testing.T) {
 	token := "you need to know it, ♪ I know ♪"
 	filename := "example.vtt"
 	t.Run("get 「.」and 「?」", func(t *testing.T) {
-		got := CheckTerminal(token)
+		got := sub.CheckTerminal(token)
 		want := true
 		if got != want {
 			t.Errorf("got %v want %v", got, want)
@@ -40,13 +43,13 @@ func TestTextSegment(t *testing.T) {
 	// })
 
 	t.Run("`UnifyTextByTerminalPoint` method test ", func(t *testing.T) {
-		f, err := ReadVTT(filename)
+		f, err := webvtt.ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := New(f)
-		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyText(webVtt)
+		webVtt := webvtt.New(f)
+		webVtt.ScanLines(webvtt.ScanSplitFunc)
+		w := webvtt.UnifyText(webVtt)
 		got := w.Elements[0].Text
 		want := "- Yo what is going on guys, welcome back to the channel."
 		if got != want {
@@ -55,19 +58,19 @@ func TestTextSegment(t *testing.T) {
 		//PrintlnJson(w.VttElements)
 	})
 	t.Run("`DeleteEmptyTextVTTElementStruct` method test", func(t *testing.T) {
-		f, err := ReadVTT(filename)
+		f, err := webvtt.ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := New(f)
-		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyText(webVtt)
-		DeleteElementOfEmptyText(w)
+		webVtt := webvtt.New(f)
+		webVtt.ScanLines(webvtt.ScanSplitFunc)
+		w := webvtt.UnifyText(webVtt)
+		webvtt.DeleteElementOfEmptyText(w)
 		got := len(w.Elements)
 		want := 3
 		if got != want {
 			t.Errorf("got %d, want %d ", got, want)
 		}
-		PrintlnJson(w.Elements)
+		webvtt.PrintlnJson(w.Elements)
 	})
 }

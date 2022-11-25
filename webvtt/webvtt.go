@@ -1,11 +1,16 @@
-package main
+package webvtt
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/lll-lll-lll-lll/deepl-subtitle/sub"
 )
 
 type WebVttString string
@@ -55,7 +60,7 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	tokenStr := string(token)
 	// CheckTimeRegexpFlagでtrueが走るとその行を空白で単語区切りにする。トークン区切りになった他の`-->`や`position...`を他のフラグで検索
-	if CheckStartOrEndTime(tokenStr) || CheckSeparator(tokenStr) || CheckPosition(tokenStr) || CheckLine(tokenStr) {
+	if sub.CheckStartOrEndTime(tokenStr) || sub.CheckSeparator(tokenStr) || sub.CheckPosition(tokenStr) || sub.CheckLine(tokenStr) {
 		{
 			advance, token, err = bufio.ScanWords(data, atEOF)
 			return
@@ -80,4 +85,17 @@ func ReadVTT(filename string) (WebVttString, error) {
 		return "", errors.New("file content is empty")
 	}
 	return WebVttString(bytesFile), nil
+}
+
+func PrintlnJson(elements []*Element) {
+	for _, e := range elements {
+		var out bytes.Buffer
+		b, _ := json.Marshal(e)
+		err := json.Indent(&out, b, "", "  ")
+		if err != nil {
+			panic(err)
+
+		}
+		fmt.Println(out.String())
+	}
 }
