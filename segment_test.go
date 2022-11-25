@@ -40,14 +40,14 @@ func TestTextSegment(t *testing.T) {
 	// })
 
 	t.Run("`UnifyTextByTerminalPoint` method test ", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyTextByTerminalPoint(webVtt)
-		got := w.VttElements[0].Text
+		w := UnifyText(webVtt)
+		got := w.Elements[0].Text
 		want := "- Yo what is going on guys, welcome back to the channel."
 		if got != want {
 			t.Errorf("got %s want %s", got, want)
@@ -55,19 +55,19 @@ func TestTextSegment(t *testing.T) {
 		//PrintlnJson(w.VttElements)
 	})
 	t.Run("`DeleteEmptyTextVTTElementStruct` method test", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyTextByTerminalPoint(webVtt)
+		w := UnifyText(webVtt)
 		DeleteVTTElementOfEmptyText(w)
-		got := len(w.VttElements)
+		got := len(w.Elements)
 		want := 3
 		if got != want {
 			t.Errorf("got %d, want %d ", got, want)
 		}
-		PrintlnJson(w.VttElements)
+		PrintlnJson(w.Elements)
 	})
 }

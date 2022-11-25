@@ -11,9 +11,9 @@ const (
 	EXTVTT = ".vtt"
 )
 
-// UnifyTextByTerminalPoint `.` か `?`を含んでいたら１つ前の構造体にTextを渡し、EndTimeを更新するメソッド
-func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
-	ves := webVtt.VttElements
+// UnifyText `.` か `?`を含んでいたら１つ前の構造体にTextを渡し、EndTimeを更新するメソッド
+func UnifyText(webVtt *WebVtt) *WebVtt {
+	ves := webVtt.Elements
 	for i := 0; i < len(ves)-1; i++ {
 		// どこまでのテキストを繋げてよいかを表す値を取得
 		untilTerminalPointCnt := RecursiveSearchTerminalPoint(ves, i)
@@ -29,7 +29,7 @@ func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 			i = untilTerminalPointCnt
 		}
 	}
-	webVtt.VttElements = ves
+	webVtt.Elements = ves
 	return webVtt
 }
 
@@ -37,7 +37,7 @@ func UnifyTextByTerminalPoint(webVtt *WebVtt) *WebVtt {
 func DeleteVTTElementOfEmptyText(webVtt *WebVtt) {
 	var i int
 	f := true
-	es := webVtt.VttElements
+	es := webVtt.Elements
 	// 空のテキストを持つ構造体を削除し切るまでループ
 	for f {
 		// ここで空のテキストを持つ構造体を削除
@@ -50,11 +50,11 @@ func DeleteVTTElementOfEmptyText(webVtt *WebVtt) {
 			f = false
 		}
 	}
-	webVtt.VttElements = es
+	webVtt.Elements = es
 }
 
 // RecursiveSearchTerminalPoint SearchTerminalTokenRegexp メソッドで文末トークンが見つかるまでの構造体の個数を返す
-func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
+func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
 	if untilTerminalCnt == len(vs)-1 {
 		return untilTerminalCnt
 	}
@@ -75,21 +75,21 @@ func RecursiveSearchTerminalPoint(vs []*VTTElement, untilTerminalCnt int) int {
 
 // ScanLines 一行ずつ読み込んで構造体を作成するメソッド
 func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
-	vttElement := wv.NewVttElement()
-	wv.VTTScanner.Split(splitFunc)
+	vttElement := wv.NewElement()
+	wv.Scanner.Split(splitFunc)
 	var vttElementFlag int
 
-	for wv.VTTScanner.Scan() {
-		line := wv.VTTScanner.Text()
+	for wv.Scanner.Scan() {
+		line := wv.Scanner.Text()
 		switch {
 		case CheckHeaderFlag(line):
-			if wv.VTTHeader.Head != "" && wv.VTTHeader.Note != "" {
+			if wv.Header.Head != "" && wv.Header.Note != "" {
 				continue
 			}
 			if line == "WEBVTT" {
-				wv.VTTHeader.Head = line
+				wv.Header.Head = line
 			} else {
-				wv.VTTHeader.Note = line
+				wv.Header.Note = line
 			}
 		case CheckStartOrEndTimeFlag(line):
 			if vttElementFlag == 0 {
@@ -110,18 +110,18 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 			vttElement.Line = line
 
 		case line == "":
-			wv.AppendVttElement(vttElement)
-			vttElement = wv.NewVttElement()
+			wv.AppendElement(vttElement)
+			vttElement = wv.NewElement()
 		default:
 			vttElement.Text += line
 		}
 	}
 
-	if err := wv.VTTScanner.Err(); err != nil {
+	if err := wv.Scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
 	// Skip head element header
-	wv.VttElements = wv.VttElements[1:]
+	wv.Elements = wv.Elements[1:]
 }
 
 // ToFile 文字列をファイルに戻すメソッド.
@@ -137,13 +137,13 @@ func (wv *WebVtt) ToFile(onlyFileName string) {
 	}
 
 	// Header
-	_, err = f.WriteString(wv.VTTHeader.Head + emptyRow)
+	_, err = f.WriteString(wv.Header.Head + emptyRow)
 	check(err)
-	_, err = f.WriteString(wv.VTTHeader.Note + emptyRow)
+	_, err = f.WriteString(wv.Header.Note + emptyRow)
 	check(err)
 
 	// Body
-	for _, e := range wv.VttElements {
+	for _, e := range wv.Elements {
 		// 空行
 		_, err = f.WriteString(emptyRow)
 		// timelineの部分

@@ -84,17 +84,17 @@ func TestWebVTTStruct(t *testing.T) {
 	filename := "example.vtt"
 	t.Run("webVtt startTime", func(t *testing.T) {
 		webVtt := WebVtt{}
-		vttElement := &VTTElement{
+		vttElement := &Element{
 			StartTime: "00:00:06.649",
 			EndTime:   "00:00:10.690",
 			Position:  "position:63%",
 			Line:      "line:0%",
 			Text:      "So I wanted to start out with an introduction to the go language itself. Now I know that",
 		}
-		webVtt.AppendVttElement(vttElement)
+		webVtt.AppendElement(vttElement)
 
-		got := webVtt.VttElements[0]
-		want := VTTElement{
+		got := webVtt.Elements[0]
+		want := Element{
 			StartTime: "00:00:06.649",
 			EndTime:   "00:00:10.690",
 			Position:  "position:63%",
@@ -121,17 +121,17 @@ func TestWebVTTStruct(t *testing.T) {
 
 	t.Run("append webVtt element to WebVtt", func(t *testing.T) {
 		webVtt := WebVtt{}
-		vttElement1 := &VTTElement{
+		vttElement1 := &Element{
 			StartTime: "00:00:06.649",
 		}
-		vttElement2 := &VTTElement{
+		vttElement2 := &Element{
 			StartTime: "00:00:15.620",
 		}
-		webVtt.AppendVttElement(vttElement1)
-		webVtt.AppendVttElement(vttElement2)
+		webVtt.AppendElement(vttElement1)
+		webVtt.AppendElement(vttElement2)
 
-		if len(webVtt.VttElements) != 2 {
-			t.Errorf("didn't append VttElement. \n got %d want 2", len(webVtt.VttElements))
+		if len(webVtt.Elements) != 2 {
+			t.Errorf("didn't append VttElement. \n got %d want 2", len(webVtt.Elements))
 		}
 	})
 
@@ -161,14 +161,14 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("ScanTimeLine method test. create VTT Element struct", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		got := webVtt.VttElements[0]
-		want := &VTTElement{
+		got := webVtt.Elements[0]
+		want := &Element{
 			StartTime: "00:00:06.649",
 			EndTime:   "00:00:10.690",
 			Position:  "position:63%",
@@ -181,13 +181,13 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("test", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		elements := webVtt.VttElements
+		elements := webVtt.Elements
 		for i, tt := range webvttstructtest {
 			d := elements[i]
 			if tt.StartTime != d.StartTime {
@@ -208,13 +208,13 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 	})
 	t.Run("Println Json VTTElement", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		elements := webVtt.VttElements
+		elements := webVtt.Elements
 		for _, e := range elements {
 			var out bytes.Buffer
 			b, _ := json.Marshal(e)
@@ -255,15 +255,15 @@ func TestWebVTTStruct(t *testing.T) {
 				Text:      "",
 			},
 		}
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyTextByTerminalPoint(webVtt)
+		w := UnifyText(webVtt)
 		DeleteVTTElementOfEmptyText(w)
-		e := w.VttElements
+		e := w.Elements
 		for i, tt := range allProcessedDone {
 			d := e[i]
 			if tt.StartTime != d.StartTime {
@@ -277,13 +277,13 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("`ToFile method test`", func(t *testing.T) {
-		f, err := ReadVTTFile(filename)
+		f, err := ReadVTT(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt := NewWebVtt(f)
+		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyTextByTerminalPoint(webVtt)
+		w := UnifyText(webVtt)
 		DeleteVTTElementOfEmptyText(w)
 		w.ToFile("test")
 	})

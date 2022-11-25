@@ -54,13 +54,13 @@ func (c *CLI) Run(args []string) int {
 		return ExitCodeOk
 	}
 	if file != "" {
-		vttfile, err = ReadVTTFile(file)
+		vttfile, err = ReadVTT(file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt = NewWebVtt(vttfile)
+		webVtt = New(vttfile)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyTextByTerminalPoint(webVtt)
+		w := UnifyText(webVtt)
 		DeleteVTTElementOfEmptyText(w)
 	}
 
@@ -69,7 +69,7 @@ func (c *CLI) Run(args []string) int {
 	}
 
 	if pj {
-		PrintlnJson(webVtt.VttElements)
+		PrintlnJson(webVtt.Elements)
 	}
 
 	return ExitCodeOk

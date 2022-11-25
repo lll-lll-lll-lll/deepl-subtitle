@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func PrintlnJson(elements []*VTTElement) {
+func PrintlnJson(elements []*Element) {
 	for _, e := range elements {
 		var out bytes.Buffer
 		b, _ := json.Marshal(e)

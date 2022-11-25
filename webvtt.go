@@ -11,13 +11,13 @@ import (
 type WebVttString string
 
 type WebVtt struct {
-	VttFile     string         `json:"file"`
-	VttElements []*VTTElement  `json:"vtt_elements"`
-	VTTHeader   *VTTHeader     `json:"header"`
-	VTTScanner  *bufio.Scanner `json:"scanner"`
+	File     string         `json:"file"`
+	Elements []*Element     `json:"vtt_elements"`
+	Header   *Header        `json:"header"`
+	Scanner  *bufio.Scanner `json:"scanner"`
 }
 
-type VTTElement struct {
+type Element struct {
 	StartTime string `json:"start_time"`
 	EndTime   string `json:"end_time"`
 	Position  string `json:"position"`
@@ -26,29 +26,29 @@ type VTTElement struct {
 	Separator string `json:"separator"`
 }
 
-type VTTHeader struct {
+type Header struct {
 	Head string `json:"head"`
 	Note string `json:"note"`
 }
 
-func NewWebVtt(file WebVttString) *WebVtt {
+func New(file WebVttString) *WebVtt {
 	f := string(file)
 	scanner := bufio.NewScanner(strings.NewReader(f))
-	header := NewVTTHeader()
-	return &WebVtt{VttFile: f, VTTScanner: scanner, VTTHeader: header}
+	header := NewHeader()
+	return &WebVtt{File: f, Scanner: scanner, Header: header}
 }
 
-func NewVTTHeader() *VTTHeader {
-	return &VTTHeader{}
+func NewHeader() *Header {
+	return &Header{}
 }
 
-func (wv *WebVtt) NewVttElement() *VTTElement {
-	return &VTTElement{}
+func (wv *WebVtt) NewElement() *Element {
+	return &Element{}
 }
 
-// AppendVttElement append VTTElement to WebVtt
-func (wv *WebVtt) AppendVttElement(vtt *VTTElement) {
-	wv.VttElements = append(wv.VttElements, vtt)
+// AppendElement append VTTElement to WebVtt
+func (wv *WebVtt) AppendElement(vtt *Element) {
+	wv.Elements = append(wv.Elements, vtt)
 }
 
 func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -65,8 +65,8 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	return
 }
 
-// ReadVTTFile use when WebVTT struct is initialized.
-func ReadVTTFile(filename string) (WebVttString, error) {
+// ReadVTT use when WebVTT struct is initialized.
+func ReadVTT(filename string) (WebVttString, error) {
 	ext := filepath.Ext(filename)
 	if ext != ".vtt" {
 		return "", errors.New("your input file extension is not `.vtt`. check your file extension")
