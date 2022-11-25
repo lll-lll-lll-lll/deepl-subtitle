@@ -81,7 +81,9 @@ func TestWebVTTStruct(t *testing.T) {
 			Text:      "you need to know it.♪ I know ♪",
 		},
 	}
-	filename := "example.vtt"
+	dir := "../data/"
+	file := "example.vtt"
+	filename := dir + file
 	t.Run("webVtt startTime", func(t *testing.T) {
 		webVtt := WebVtt{}
 		vttElement := &Element{
@@ -136,15 +138,18 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("open vtt file", func(t *testing.T) {
-		file, err := os.Open(filename)
-		defer file.Close()
+		f, err := os.Open(filename)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer f.Close()
 
-		copyFile, err := os.Create("copy" + filename)
+		copyFile, err := os.Create("copy" + file)
 		if err != nil {
 			t.Errorf("%s", err)
 		}
 
-		_, err = io.Copy(copyFile, file)
+		_, err = io.Copy(copyFile, f)
 		if err != nil {
 			t.Errorf("file doesn't exist.")
 		}
@@ -154,7 +159,7 @@ func TestWebVTTStruct(t *testing.T) {
 		//	t.Errorf("err is %s", err)
 		//}
 
-		err = os.Remove("copy" + filename)
+		err = os.Remove("copy" + file)
 		if err != nil {
 			t.Errorf("remove err %s", err)
 		}

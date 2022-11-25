@@ -63,12 +63,9 @@ func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
 	e := vs[untilTerminalCnt].Text
 	locs := sub.SearchTerminalToken(e)
 	f := func(locs []int) bool {
-		if len(locs) == 0 {
-			return true
-		}
-		return false
+		return len(locs) == 0
 	}
-	if f(locs) == true {
+	if f(locs) {
 		untilTerminalCnt++
 		return RecursiveSearchTerminalPoint(vs, untilTerminalCnt)
 	}
@@ -148,9 +145,15 @@ func (wv *WebVtt) ToFile(onlyFileName string) {
 	for _, e := range wv.Elements {
 		// 空行
 		_, err = f.WriteString(emptyRow)
+		if err != nil {
+			log.Fatal(err)
+		}
 		// timelineの部分
 		_, err = f.WriteString(e.StartTime + empty + e.Separator + empty +
 			e.EndTime + empty + e.Position + empty + e.Line + emptyRow)
+		if err != nil {
+			log.Fatal(err)
+		}
 		_, err = f.WriteString(e.Text + emptyRow)
 	}
 	if err != nil {
