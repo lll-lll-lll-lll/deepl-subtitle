@@ -1,5 +1,6 @@
 # unify-vtt-text
-
+### zenn
+https://zenn.dev/jordan/articles/e3083892e682b6
 # CLI
 
 
