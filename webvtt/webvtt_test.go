@@ -9,18 +9,6 @@ import (
 	"testing"
 )
 
-//func TestGetVtt(t *testing.T) {
-//	//url := "https://www.youtube.com/watch?v=YS4e4q9oBaU&t=3764s"
-//	shortMovie := "https://www.youtube.com/watch?v=UVhIMwHDS7k"
-//	filename := "testvtt"
-//	cmd := exec.Command("yt-dlp", "--skip-download", "-o", filename, "--sub-format", "vtt", "--write-subs", shortMovie)
-//	err := cmd.Run()
-//	if err != nil {
-//		log.Fatalln(err)
-//		return
-//	}
-//}
-
 // TestWebVTTStruct Test method and property of WebVtt struct
 func TestWebVTTStruct(t *testing.T) {
 	webvttstructtest := []struct {
