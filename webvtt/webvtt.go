@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,7 +67,6 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 			return
 		}
 	}
-
 	return
 }
 
@@ -93,8 +93,7 @@ func PrintlnJson(elements []*Element) {
 		b, _ := json.Marshal(e)
 		err := json.Indent(&out, b, "", "  ")
 		if err != nil {
-			panic(err)
-
+			log.Fatal(err)
 		}
 		fmt.Println(out.String())
 	}
