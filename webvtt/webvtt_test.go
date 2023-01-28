@@ -154,7 +154,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("ScanTimeLine method test. create VTT Element struct", func(t *testing.T) {
-		f, err := ReadVTT(filename)
+		f, err := Read(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -174,7 +174,7 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("test", func(t *testing.T) {
-		f, err := ReadVTT(filename)
+		f, err := Read(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -201,7 +201,7 @@ func TestWebVTTStruct(t *testing.T) {
 		}
 	})
 	t.Run("Println Json VTTElement", func(t *testing.T) {
-		f, err := ReadVTT(filename)
+		f, err := Read(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -248,15 +248,15 @@ func TestWebVTTStruct(t *testing.T) {
 				Text:      "",
 			},
 		}
-		f, err := ReadVTT(filename)
+		f, err := Read(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
 		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyText(webVtt)
-		DeleteElementOfEmptyText(w)
-		e := w.Elements
+		webVtt.UnifyText()
+		webVtt.DeleteElementOfEmptyText()
+		e := webVtt.Elements
 		for i, tt := range allProcessedDone {
 			d := e[i]
 			if tt.StartTime != d.StartTime {
@@ -270,15 +270,15 @@ func TestWebVTTStruct(t *testing.T) {
 	})
 
 	t.Run("`ToFile method test`", func(t *testing.T) {
-		f, err := ReadVTT(filename)
+		f, err := Read(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
 		webVtt := New(f)
 		webVtt.ScanLines(ScanSplitFunc)
-		w := UnifyText(webVtt)
-		DeleteElementOfEmptyText(w)
-		w.ToFile("test")
+		webVtt.UnifyText()
+		webVtt.DeleteElementOfEmptyText()
+		webVtt.ToFile("test")
 	})
 
 }

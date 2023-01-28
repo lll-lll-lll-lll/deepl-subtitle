@@ -54,14 +54,14 @@ func (c *CLI) Run(args []string) int {
 		return ExitCodeOk
 	}
 	if file != "" {
-		vttfile, err = webvtt.ReadVTT(file)
+		vttfile, err = webvtt.Read(file)
 		if err != nil {
 			log.Fatal(err)
 		}
 		webVtt = webvtt.New(vttfile)
 		webVtt.ScanLines(webvtt.ScanSplitFunc)
-		w := webvtt.UnifyText(webVtt)
-		webvtt.DeleteElementOfEmptyText(w)
+		webVtt.UnifyText()
+		webVtt.DeleteElementOfEmptyText()
 	}
 
 	if path != "" {
