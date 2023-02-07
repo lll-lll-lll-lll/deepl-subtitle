@@ -85,12 +85,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	webVtt := webvtt.New(f)
-	webVtt.ScanLines(webvtt.ScanSplitFunc)
-	webVtt.UnifyText()
-	webVtt.DeleteElementOfEmptyText()
+	vtt := webvtt.New(f)
+	vtt.ScanLines(webvtt.ScanSplitFunc)
+	vtt.UnifyText()
+	vtt.DeleteElementOfEmptyText()
 	// a.ToFile("testoutput")
-	webvtt.PrintlnJson(webVtt.Elements)
+	webvtt.PrintlnJson(vtt.Elements)
 }
 
 
