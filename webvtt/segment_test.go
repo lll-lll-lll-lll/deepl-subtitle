@@ -32,7 +32,6 @@ func TestTextSegment(t *testing.T) {
 		if got != want {
 			t.Errorf("got %s want %s", got, want)
 		}
-		//PrintlnJson(w.VttElements)
 	})
 	t.Run("`DeleteEmptyTextVTTElementStruct` method test", func(t *testing.T) {
 		f, err := Read(filename)
@@ -48,6 +47,5 @@ func TestTextSegment(t *testing.T) {
 		if got != want {
 			t.Errorf("got %d, want %d ", got, want)
 		}
-		PrintlnJson(webVtt.Elements)
 	})
 }
