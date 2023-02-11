@@ -4,7 +4,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/lll-lll-lll-lll/sn-formater/sub"
+	"github.com/lll-lll-lll-lll/sn-formatter/sub"
 )
 
 func TestTextSegment(t *testing.T) {

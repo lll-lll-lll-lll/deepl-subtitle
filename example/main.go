@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lll-lll-lll-lll/sn-formater/webvtt"
+	"github.com/lll-lll-lll-lll/sn-formatter/webvtt"
 )
 
 func main() {

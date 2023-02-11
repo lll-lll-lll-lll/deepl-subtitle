@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/lll-lll-lll-lll/sn-formater/webvtt"
+	"github.com/lll-lll-lll-lll/sn-formatter/webvtt"
 )
 
 const Version string = "v0.1.0"
