@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/lll-lll-lll-lll/deepl-subtitle/sub"
+	"github.com/lll-lll-lll-lll/format-webvtt/sub"
 )
 
 const (

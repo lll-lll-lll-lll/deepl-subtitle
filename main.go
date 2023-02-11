@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/lll-lll-lll-lll/deepl-subtitle/cli"
+	"github.com/lll-lll-lll-lll/format-webvtt/cli"
 )
 
 func main() {

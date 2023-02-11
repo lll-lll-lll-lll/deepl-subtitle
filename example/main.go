@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lll-lll-lll-lll/deepl-subtitle/webvtt"
+	"github.com/lll-lll-lll-lll/format-webvtt/webvtt"
 )
 
 func main() {

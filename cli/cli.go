@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/lll-lll-lll-lll/deepl-subtitle/webvtt"
+	"github.com/lll-lll-lll-lll/format-webvtt/webvtt"
 )
 
 const Version string = "v0.1.0"
