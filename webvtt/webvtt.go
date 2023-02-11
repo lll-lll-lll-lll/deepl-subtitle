@@ -1,3 +1,13 @@
+// Package webvtt parse file of vtt extension.
+//
+// This package doesn't guarantee parsing incorrectly formatted vtt file
+// Correct formatted vtt file example following:
+//
+// 00:00:00.350 --> 00:00:01.530 position:63% line:0%
+// - Yo what is going on guys,
+
+// 00:00:01.530 --> 00:00:02.770 position:63% line:0%
+// welcome back to the channel.
 package webvtt
 
 import (
@@ -14,19 +24,30 @@ import (
 	"github.com/lll-lll-lll-lll/format-webvtt/sub"
 )
 
-const (
-	EXTVTT = ".vtt"
-)
-
-type WebVttString string
+// To distinguish from string
+type FileName string
 
 type WebVtt struct {
-	File     string         `json:"file"`
+	File string `json:"file"`
+	// Collection of vtt structure
+	//
+	// Example:
+	// 00:00:00.350 --> 00:00:01.530 position:63% line:0%
+	// Yo what is going on guys,
+	//
+	// 00:00:01.530 --> 00:00:02.770 position:63% line:0%
+	// welcome back to the channel.
+	//
 	Elements []*Element     `json:"vtt_elements"`
 	Header   *Header        `json:"header"`
 	Scanner  *bufio.Scanner `json:"scanner"`
 }
 
+// A pattern from the vtt file dropped into the structure
+//
+// Example:
+// 00:00:00.350(StartTime) -->(Separator) 00:00:01.530(EndTime) position:63%(Position) line:0%(Line)
+// Yo what is going on guys,(Text)
 type Element struct {
 	StartTime string `json:"start_time"`
 	EndTime   string `json:"end_time"`
@@ -36,12 +57,17 @@ type Element struct {
 	Separator string `json:"separator"`
 }
 
+// First two lines of the vtt file
+//
+// Example:
+// WEBVTT
+// Kind: captions
 type Header struct {
 	Head string `json:"head"`
 	Note string `json:"note"`
 }
 
-func New(file WebVttString) *WebVtt {
+func New(file FileName) *WebVtt {
 	f := string(file)
 	scanner := bufio.NewScanner(strings.NewReader(f))
 	header := NewHeader()
@@ -75,7 +101,7 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 }
 
 // Read use when WebVTT struct is initialized.
-func Read(filename string) (WebVttString, error) {
+func Read(filename string) (FileName, error) {
 	ext := filepath.Ext(filename)
 	if ext != ".vtt" {
 		return "", errors.New("your input file extension is not `.vtt`. check your file extension")
@@ -88,7 +114,7 @@ func Read(filename string) (WebVttString, error) {
 	if string(b) == "" {
 		return "", errors.New("file content is empty")
 	}
-	return WebVttString(b), nil
+	return FileName(b), nil
 }
 
 func PrintlnJson(elements []*Element) {
@@ -103,32 +129,28 @@ func PrintlnJson(elements []*Element) {
 	}
 }
 
-// UnifyText `.` か `?`を含んでいたら１つ前の構造体にTextを渡し、EndTimeを更新するメソッド
+// UnifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
 func (wv *WebVtt) UnifyText() {
 	for i := 0; i < len(wv.Elements)-1; i++ {
-		// どこまでのテキストを繋げてよいかを表す値を取得
 		untilTerminalPointCnt := RecursiveSearchTerminalPoint(wv.Elements, i)
 		for j := untilTerminalPointCnt; j > i; j-- {
-			t := wv.Elements[j].Text
-			e := wv.Elements[j].EndTime
-			wv.Elements[j-1].Text += " " + t
-			wv.Elements[j-1].EndTime = e
+			wv.Elements[j-1].Text += " " + wv.Elements[j].Text
+			wv.Elements[j-1].EndTime = wv.Elements[j].EndTime
 			wv.Elements[j].Text = ""
 		}
-		// 文末を表現するトークンを見つけた位置まで移動
+		// Move to the position where the token representing the end of the sentence is found
 		if untilTerminalPointCnt > 0 {
 			i = untilTerminalPointCnt
 		}
 	}
 }
 
-// DeleteElementOfEmptyText テキストが空の構造体を削除するメソッド
+// DeleteElementOfEmptyText
+// Loop until all structures with empty text are deleted
 func (wv *WebVtt) DeleteElementOfEmptyText() {
 	var i int
 	f := true
-	// 空のテキストを持つ構造体を削除し切るまでループ
 	for f {
-		// ここで空のテキストを持つ構造体を削除
 		if wv.Elements[i].Text == "" {
 			wv.Elements = append(wv.Elements[:i], wv.Elements[i+1:]...)
 			i--
@@ -208,7 +230,6 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	wv.Elements = wv.Elements[1:]
 }
 
-// ToFile 文字列をファイルに戻すメソッド.
 func (wv *WebVtt) ToFile(onlyFileName string) {
 	const (
 		emptyRow = "\n"

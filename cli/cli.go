@@ -28,7 +28,7 @@ func (c *CLI) Run(args []string) int {
 	var (
 		version bool
 		file    string
-		vttfile webvtt.WebVttString
+		vttfile webvtt.FileName
 		path    string
 		err     error
 		pj      bool
