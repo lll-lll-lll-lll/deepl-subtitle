@@ -24,6 +24,10 @@ import (
 	"github.com/lll-lll-lll-lll/format-webvtt/sub"
 )
 
+var (
+	ErrVTTEXT = errors.New("invalid file extension")
+)
+
 // To distinguish from string
 type FileName string
 
@@ -104,15 +108,15 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 func Read(filename string) (FileName, error) {
 	ext := filepath.Ext(filename)
 	if ext != ".vtt" {
-		return "", errors.New("your input file extension is not `.vtt`. check your file extension")
+		return "", fmt.Errorf("%w. input extension is %v", ErrVTTEXT, ext)
 	}
 
 	b, err := os.ReadFile(filename)
 	if err != nil {
 		return "", err
 	}
-	if string(b) == "" {
-		return "", errors.New("file content is empty")
+	if len(b) == 0 {
+		return "", fmt.Errorf("file content is empty")
 	}
 	return FileName(b), nil
 }
