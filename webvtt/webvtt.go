@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/lll-lll-lll-lll/format-webvtt/sub"
+	"github.com/lll-lll-lll-lll/sn-formater/sub"
 )
 
 var (

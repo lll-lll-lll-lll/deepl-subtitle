@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/lll-lll-lll-lll/format-webvtt/cli"
+	"github.com/lll-lll-lll-lll/sn-formater/cli"
 )
 
 func main() {
