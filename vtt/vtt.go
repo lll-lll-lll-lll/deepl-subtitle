@@ -2,6 +2,7 @@ package vtt
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -22,7 +23,7 @@ type WebVtt struct {
 	Header   *Header        `json:"header"`
 	Scanner  *bufio.Scanner `json:"scanner"`
 	builder  *strings.Builder
-	sumBytes int64
+	sumBytes int
 }
 
 // A pattern from the vtt file dropped into the structure
@@ -118,11 +119,11 @@ func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 	e := &Element{}
 	wv.Scanner.Split(splitFunc)
 	var isStartOrEndTime int
-	var sumBytes int64
+	var sumBytes int
 
 	for wv.Scanner.Scan() {
 		line := wv.Scanner.Text()
-		sumBytes += int64(len(line)) + 1
+		sumBytes += len(line) + 1
 		switch {
 		case checkHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
@@ -170,12 +171,20 @@ func (wv *WebVtt) read() {
 	wv.deleteElementOfEmptyText()
 }
 
+func (wv *WebVtt) Read(p []byte) (n int, err error) {
+	wv.Header = &Header{}
+	wv.Scanner = bufio.NewScanner(bytes.NewReader(p))
+	wv.builder = &strings.Builder{}
+	wv.read()
+	return int(wv.sumBytes), nil
+}
+
 func (wv *WebVtt) ReadFrom(r io.Reader) (n int64, err error) {
 	wv.Header = &Header{}
 	wv.Scanner = bufio.NewScanner(r)
 	wv.builder = &strings.Builder{}
 	wv.read()
-	return wv.sumBytes, nil
+	return int64(wv.sumBytes), nil
 }
 
 func (wv *WebVtt) WriteTo(w io.Writer) (int64, error) {
