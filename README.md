@@ -6,11 +6,11 @@ https://www.w3.org/TR/webvtt1/
 
 ## Install
 ```sh
-brew tap lll-lll-lll-lll/vreader
+brew tap lll-lll-lll-lll/vtt-formatter
 ```
 
 ```sh
-brew install vreader
+brew install vtt-formatter
 ```
 
 
@@ -20,15 +20,15 @@ Usage: vreader [options]
 Options:
   -help or h 	 		        help
   -version            		 now version
-  -file=<{filename}.vtt>    vtt file name
+  -filepath=<{filename}.vtt>    vtt file name
   -path=<{filename}.vtt>    File name of destination
-  -pj                       print json in console
+  -p                        print json in console
 ```
 
 ### CLI Example
 
 ```sh
- vreader  -file example.vtt -pj -path shapedfile.vtt
+ vtt-formatter  -filepath example.vtt -pj -path shapedfile.vtt
 ```
 
 
@@ -81,12 +81,3 @@ the way that we usefunctional components and why you need to know it.♪ I know 
 }
 ```
 </div></details>
-
-
-Package webvtt parse file of vtt extension.
-This package doesn't guarantee parsing incorrectly formatted vtt file
-Correct formatted vtt file example following:
-00:00:00.350 --> 00:00:01.530 position:63% line:0%
-Yo what is going on guys,
-00:00:01.530 --> 00:00:02.770 position:63% line:0%
-welcome back to the channel.

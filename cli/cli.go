@@ -35,13 +35,13 @@ func (c *CLI) Run(args []string) int {
 	)
 	webVtt := &vtt.WebVtt{}
 
-	flags := flag.NewFlagSet("vttreader", flag.ContinueOnError)
+	flags := flag.NewFlagSet("vtt-formatter", flag.ContinueOnError)
 	flags.SetOutput(c.errStream)
 	flags.Usage = func() {
-		fmt.Fprintf(c.errStream, usage, "vttreader")
+		fmt.Fprintf(c.errStream, usage, "vtt-formatter")
 	}
 	flags.BoolVar(&version, "version", false, "print version")
-	flags.StringVar(&filePath, "file", "", "vtt file")
+	flags.StringVar(&filePath, "filepath", "", "vtt file")
 	flags.StringVar(&path, "path", "", "save path")
 	flags.BoolVar(&isPrint, "p", false, "print vtt elements json format")
 
@@ -50,7 +50,7 @@ func (c *CLI) Run(args []string) int {
 	}
 
 	if version {
-		fmt.Fprintf(c.errStream, "vttreader version %v\n", Version)
+		fmt.Fprintf(c.errStream, "vtt-formatter version %v\n", Version)
 		return ExitCodeOk
 	}
 	if filePath != "" {
