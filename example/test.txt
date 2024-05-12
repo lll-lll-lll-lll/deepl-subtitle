@@ -1,0 +1,11 @@
+WEBVTT
+Kind: captions
+
+  00:00:02.770  
+ - Yo what is going on guys, welcome back to the channel.
+
+00:00:02.770 --> 00:00:08.840 position:63% line:0%
+My name's Sonny and todayI'm gonna teach you all about the useEffect Hook and why it has transformed.
+
+00:00:08.840 --> 00:00:11.110 position:63% line:0%
+the way that we usefunctional components and why

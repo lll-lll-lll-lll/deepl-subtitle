@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
+	"path/filepath"
 
-	"github.com/lll-lll-lll-lll/sn-formatter/webvtt"
+	"github.com/lll-lll-lll-lll/vtt-formatter/vtt"
 )
 
-const Version string = "v0.1.0"
+const Version string = "v0.2.0"
 
 const (
 	ExitCodeOk             = 0
@@ -26,50 +28,59 @@ func New(outStream io.Writer, errStream io.Writer) *CLI {
 
 func (c *CLI) Run(args []string) int {
 	var (
-		version bool
-		file    string
-		vttfile webvtt.FileName
-		path    string
-		err     error
-		pj      bool
+		version  bool
+		filePath string
+		path     string
+		isPrint  bool
 	)
-	webVtt := &webvtt.WebVtt{}
+	webVtt := &vtt.WebVtt{}
 
-	flags := flag.NewFlagSet("vttreader", flag.ContinueOnError)
+	flags := flag.NewFlagSet("vtt-formatter", flag.ContinueOnError)
 	flags.SetOutput(c.errStream)
 	flags.Usage = func() {
-		fmt.Fprintf(c.errStream, usage, "vttreader")
+		fmt.Fprintf(c.errStream, usage, "vtt-formatter")
 	}
 	flags.BoolVar(&version, "version", false, "print version")
-	flags.StringVar(&file, "file", "", "vtt file")
+	flags.StringVar(&filePath, "filepath", "", "vtt file")
 	flags.StringVar(&path, "path", "", "save path")
-	flags.BoolVar(&pj, "pj", false, "print vtt elements json format")
+	flags.BoolVar(&isPrint, "p", false, "print vtt elements json format")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
 	}
 
 	if version {
-		fmt.Fprintf(c.errStream, "vttreader version %v\n", Version)
+		fmt.Fprintf(c.errStream, "vtt-formatter version %v\n", Version)
 		return ExitCodeOk
 	}
-	if file != "" {
-		vttfile, err = webvtt.Read(file)
+	if filePath != "" {
+		if ext := filepath.Ext(filePath); ext != ".vtt" {
+			fmt.Fprintf(c.errStream, "file extension is not vtt: %s\n", ext)
+			return ExitCodeParseFlagError
+		}
+		vttfile, err := os.Open(filePath)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt = webvtt.New(vttfile)
-		webVtt.ScanLines(webvtt.ScanSplitFunc)
-		webVtt.UnifyText()
-		webVtt.DeleteElementOfEmptyText()
+		defer vttfile.Close()
+		if _, err := webVtt.ReadFrom(vttfile); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if path != "" {
-		webVtt.ToFile(path)
+		f, err := os.Create(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		if _, err := webVtt.WriteTo(f); err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	if pj {
-		webvtt.PrintlnJson(webVtt.Elements)
+	if isPrint {
+		webVtt.WriteTo(os.Stdout)
 	}
 
 	return ExitCodeOk
@@ -81,7 +92,7 @@ Usage: %s [options] slug path
 Options:
   -help or h 	 		    help
   -version            		now version
-  -file=<{filename}.vtt>    vtt file name
+  -filepath=<{filename}.vtt>    vtt file path
   -path=<{filename}.vtt>    shaped vtt file path
-  -pj                       print json console
+  -p                        print vtt elements json format
 `

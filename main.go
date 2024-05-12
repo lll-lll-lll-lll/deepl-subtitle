@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/lll-lll-lll-lll/sn-formatter/cli"
+	"github.com/lll-lll-lll-lll/vtt-formatter/cli"
 )
 
 func main() {

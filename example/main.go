@@ -3,21 +3,31 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
-	"github.com/lll-lll-lll-lll/sn-formatter/webvtt"
+	"github.com/lll-lll-lll-lll/vtt-formatter/vtt"
 )
 
 func main() {
-	filename := "data/example.vtt"
-	fmt.Println("start reading file.")
-	f, err := webvtt.Read(filename)
+	filename := "../data/example.vtt"
+	f, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("ファイルを開くのに失敗しました:", err)
+		return
+	}
+	defer f.Close()
+	wvtt := &vtt.WebVtt{}
+	n, err := wvtt.ReadFrom(f)
 	if err != nil {
 		log.Fatal(err)
 	}
-	vtt := webvtt.New(f)
-	vtt.ScanLines(webvtt.ScanSplitFunc)
-	vtt.UnifyText()
-	vtt.DeleteElementOfEmptyText()
-	// a.ToFile("testoutput")
-	webvtt.PrintlnJson(vtt.Elements)
+	log.Println("test", n)
+	fff, err := os.Create("test.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fff.Close()
+	if _, err := wvtt.WriteTo(fff); err != nil {
+		log.Fatal(err)
+	}
 }

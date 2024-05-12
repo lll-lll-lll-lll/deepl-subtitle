@@ -1,15 +1,16 @@
 # unify-vtt-text
 
-# CLI
+# Specification
+https://www.w3.org/TR/webvtt1/
 
 
 ## Install
 ```sh
-brew tap lll-lll-lll-lll/vreader
+brew tap lll-lll-lll-lll/vtt-formatter
 ```
 
 ```sh
-brew install vreader
+brew install vtt-formatter
 ```
 
 
@@ -19,15 +20,15 @@ Usage: vreader [options]
 Options:
   -help or h 	 		        help
   -version            		 now version
-  -file=<{filename}.vtt>    vtt file name
+  -filepath=<{filename}.vtt>    vtt file name
   -path=<{filename}.vtt>    File name of destination
-  -pj                       print json in console
+  -p                        print json in console
 ```
 
 ### CLI Example
 
 ```sh
- vreader  -file example.vtt -pj -path shapedfile.vtt
+ vtt-formatter  -filepath example.vtt -pj -path shapedfile.vtt
 ```
 
 
@@ -80,15 +81,3 @@ the way that we usefunctional components and why you need to know it.♪ I know 
 }
 ```
 </div></details>
-
-
-**これから実装したいこと**<br>
-- テキスト内に`○○○○○.○○○`のようにテキストが途中で区切られて次の文章が含まれている場合、「.」とそれより前のテキストだけ前の構造体に接続する実装
-
-
-
-
-
-# how to download vtt file (Youtube)
-
-`youtube-dl --skip-download --write-sub {YoutubeURL}`
