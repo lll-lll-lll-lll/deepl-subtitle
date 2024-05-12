@@ -1,38 +1,16 @@
-// Package webvtt parse file of vtt extension.
-//
-// This package doesn't guarantee parsing incorrectly formatted vtt file
-// Correct formatted vtt file example following:
-//
-// 00:00:00.350 --> 00:00:01.530 position:63% line:0%
-// - Yo what is going on guys,
-
-// 00:00:01.530 --> 00:00:02.770 position:63% line:0%
-// welcome back to the channel.
-package webvtt
+package vtt
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/lll-lll-lll-lll/sn-formatter/sub"
 )
-
-var (
-	ErrVTTEXT = errors.New("invalid file extension")
-)
-
-// To distinguish from string
-type FileName string
 
 type WebVtt struct {
-	File string `json:"file"`
+	fileContent string `json:"file"`
 	// Collection of vtt structure
 	//
 	// Example:
@@ -71,31 +49,23 @@ type Header struct {
 	Note string `json:"note"`
 }
 
-func New(file FileName) *WebVtt {
-	f := string(file)
-	scanner := bufio.NewScanner(strings.NewReader(f))
-	header := NewHeader()
-	return &WebVtt{File: f, Scanner: scanner, Header: header}
+func New(file string) *WebVtt {
+	scanner := bufio.NewScanner(strings.NewReader(file))
+	header := &Header{}
+	return &WebVtt{fileContent: file, Scanner: scanner, Header: header}
 }
 
-func NewHeader() *Header {
-	return &Header{}
+func (wv *WebVtt) Format() {
+	wv.ScanLines(scanSplitFunc)
+	wv.unifyText()
+	wv.deleteElementOfEmptyText()
 }
 
-func (wv *WebVtt) NewElement() *Element {
-	return &Element{}
-}
-
-// AppendElement append VTTElement to WebVtt
-func (wv *WebVtt) AppendElement(vtt *Element) {
-	wv.Elements = append(wv.Elements, vtt)
-}
-
-func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func scanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	t := string(token)
 	// CheckTimeRegexpFlagでtrueが走るとその行を空白で単語区切りにする。トークン区切りになった他の`-->`や`position...`を他のフラグで検索
-	if sub.CheckStartOrEndTime(t) || sub.CheckSeparator(t) || sub.CheckPosition(t) || sub.CheckLine(t) {
+	if checkToken(StartOrEndTime, t) || checkToken(Separator, t) || checkToken(Position, t) || checkToken(Line, t) {
 		{
 			advance, token, err = bufio.ScanWords(data, atEOF)
 			return
@@ -104,37 +74,25 @@ func ScanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	return
 }
 
-// Read use when WebVTT struct is initialized.
-func Read(filename string) (FileName, error) {
+// ReadFileContents is used when the WebVTT struct is initialized.
+func ReadFileContents(filename string) (string, error) {
 	ext := filepath.Ext(filename)
 	if ext != ".vtt" {
-		return "", fmt.Errorf("%w. input extension is %v", ErrVTTEXT, ext)
+		return "", fmt.Errorf("invalid file extension: %v, expected .vtt", ext)
 	}
 
 	b, err := os.ReadFile(filename)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to read file: %v, error: %w", filename, err)
 	}
 	if len(b) == 0 {
-		return "", fmt.Errorf("file content is empty")
+		return "", fmt.Errorf("file content is empty: %v", filename)
 	}
-	return FileName(b), nil
+	return string(b), nil
 }
 
-func PrintlnJson(elements []*Element) {
-	for _, e := range elements {
-		var out bytes.Buffer
-		b, _ := json.Marshal(e)
-		err := json.Indent(&out, b, "", "  ")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(out.String())
-	}
-}
-
-// UnifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
-func (wv *WebVtt) UnifyText() {
+// unifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
+func (wv *WebVtt) unifyText() {
 	for i := 0; i < len(wv.Elements)-1; i++ {
 		untilTerminalPointCnt := RecursiveSearchTerminalPoint(wv.Elements, i)
 		for j := untilTerminalPointCnt; j > i; j-- {
@@ -151,28 +109,29 @@ func (wv *WebVtt) UnifyText() {
 
 // DeleteElementOfEmptyText
 // Loop until all structures with empty text are deleted
-func (wv *WebVtt) DeleteElementOfEmptyText() {
+func (wv *WebVtt) deleteElementOfEmptyText() {
 	var i int
-	f := true
-	for f {
+	for {
 		if wv.Elements[i].Text == "" {
 			wv.Elements = append(wv.Elements[:i], wv.Elements[i+1:]...)
 			i--
 		}
 		i++
 		if len(wv.Elements) == i {
-			f = false
+			break
 		}
 	}
 }
 
-// RecursiveSearchTerminalPoint SearchTerminalTokenRegexp メソッドで文末トークンが見つかるまでの構造体の個数を返す
+// RecursiveSearchTerminalPoint is a method that recursively searches for
+// the terminal point in the given slice of VTT elements.
+// It returns the index of the element that contains the terminal point.
 func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
 	if untilTerminalCnt == len(vs)-1 {
 		return untilTerminalCnt
 	}
 	e := vs[untilTerminalCnt].Text
-	locs := sub.SearchTerminalToken(e)
+	locs := searchTerminalToken(e)
 	f := func(locs []int) bool {
 		return len(locs) == 0
 	}
@@ -185,14 +144,14 @@ func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
 
 // ScanLines 一行ずつ読み込んで構造体を作成するメソッド
 func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
-	e := wv.NewElement()
+	e := &Element{}
 	wv.Scanner.Split(splitFunc)
 	var isStartOrEndTime int
 
 	for wv.Scanner.Scan() {
 		line := wv.Scanner.Text()
 		switch {
-		case sub.CheckHeader(line):
+		case checkHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
 				continue
 			}
@@ -201,7 +160,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 			} else {
 				wv.Header.Note = line
 			}
-		case sub.CheckStartOrEndTime(line):
+		case checkToken(StartOrEndTime, line):
 			if isStartOrEndTime == 0 {
 				isStartOrEndTime++
 				e.StartTime = line
@@ -210,18 +169,18 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 				isStartOrEndTime--
 			}
 
-		case sub.CheckSeparator(line):
+		case checkToken(Separator, line):
 			e.Separator = line
 
-		case sub.CheckPosition(line):
+		case checkToken(Position, line):
 			e.Position = line
 
-		case sub.CheckLine(line):
+		case checkToken(Line, line):
 			e.Line = line
 
 		case line == "":
-			wv.AppendElement(e)
-			e = wv.NewElement()
+			wv.Elements = append(wv.Elements, e)
+			e = &Element{}
 		default:
 			e.Text += line
 		}
@@ -234,43 +193,47 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	wv.Elements = wv.Elements[1:]
 }
 
-func (wv *WebVtt) ToFile(onlyFileName string) {
+func (wv *WebVtt) WriteToFile(fileName string) error {
 	const (
 		emptyRow = "\n"
 		empty    = " "
 	)
 
-	f, err := os.Create(onlyFileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	var builder strings.Builder
 
 	// Header
-	_, err = f.WriteString(wv.Header.Head + emptyRow)
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = f.WriteString(wv.Header.Note + emptyRow)
-	if err != nil {
-		log.Fatal(err)
-	}
+	builder.WriteString(wv.Header.Head + emptyRow)
+	builder.WriteString(wv.Header.Note + emptyRow)
 
 	// Body
 	for _, e := range wv.Elements {
-		// 空行
-		_, err = f.WriteString(emptyRow)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// timelineの部分
-		_, err = f.WriteString(e.StartTime + empty + e.Separator + empty +
+		// Empty line
+		builder.WriteString(emptyRow)
+		// Timeline part
+		builder.WriteString(e.StartTime + empty + e.Separator + empty +
 			e.EndTime + empty + e.Position + empty + e.Line + emptyRow)
-		if err != nil {
-			log.Fatal(err)
-		}
-		_, err = f.WriteString(e.Text + emptyRow)
+		builder.WriteString(e.Text + emptyRow)
 	}
+
+	f, err := os.Create(fileName)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	defer f.Close()
+
+	_, err = f.WriteString(builder.String())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Print(elements []*Element) error {
+	d, err := json.Marshal(elements)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(d))
+	return nil
 }

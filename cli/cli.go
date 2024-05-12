@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/lll-lll-lll-lll/sn-formatter/webvtt"
+	"github.com/lll-lll-lll-lll/vtt-formatter/vtt"
 )
 
 const Version string = "v0.1.0"
@@ -28,12 +28,12 @@ func (c *CLI) Run(args []string) int {
 	var (
 		version bool
 		file    string
-		vttfile webvtt.FileName
+		vttfile string
 		path    string
 		err     error
 		pj      bool
 	)
-	webVtt := &webvtt.WebVtt{}
+	webVtt := &vtt.WebVtt{}
 
 	flags := flag.NewFlagSet("vttreader", flag.ContinueOnError)
 	flags.SetOutput(c.errStream)
@@ -54,22 +54,20 @@ func (c *CLI) Run(args []string) int {
 		return ExitCodeOk
 	}
 	if file != "" {
-		vttfile, err = webvtt.Read(file)
+		vttfile, err = vtt.ReadFileContents(file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		webVtt = webvtt.New(vttfile)
-		webVtt.ScanLines(webvtt.ScanSplitFunc)
-		webVtt.UnifyText()
-		webVtt.DeleteElementOfEmptyText()
+		webVtt = vtt.New(vttfile)
+		webVtt.Format()
 	}
 
 	if path != "" {
-		webVtt.ToFile(path)
+		webVtt.WriteToFile(path)
 	}
 
 	if pj {
-		webvtt.PrintlnJson(webVtt.Elements)
+		vtt.Print(webVtt.Elements)
 	}
 
 	return ExitCodeOk
@@ -83,5 +81,5 @@ Options:
   -version            		now version
   -file=<{filename}.vtt>    vtt file name
   -path=<{filename}.vtt>    shaped vtt file path
-  -pj                       print json console
+  -p                        print json console
 `

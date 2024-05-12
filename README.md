@@ -1,6 +1,7 @@
 # unify-vtt-text
 
-# CLI
+# Specification
+https://www.w3.org/TR/webvtt1/
 
 
 ## Install
@@ -89,6 +90,10 @@ the way that we usefunctional components and why you need to know it.♪ I know 
 
 
 
-# how to download vtt file (Youtube)
-
-`youtube-dl --skip-download --write-sub {YoutubeURL}`
+Package webvtt parse file of vtt extension.
+This package doesn't guarantee parsing incorrectly formatted vtt file
+Correct formatted vtt file example following:
+00:00:00.350 --> 00:00:01.530 position:63% line:0%
+Yo what is going on guys,
+00:00:01.530 --> 00:00:02.770 position:63% line:0%
+welcome back to the channel.

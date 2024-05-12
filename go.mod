@@ -1,3 +1,3 @@
-module github.com/lll-lll-lll-lll/sn-formatter
+module github.com/lll-lll-lll-lll/vtt-formatter
 
-go 1.18
+go 1.21
