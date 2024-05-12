@@ -30,10 +30,10 @@ release:
 brews:
   - tap:
       owner: lll-lll-lll-lll
-      name: homebrew-vreader
+      name: homebrew-vtt-formatter
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     folder: Formula
-    homepage: https://github.com/lll-lll-lll-lll/vreader
-    description: vreader
+    homepage: https://github.com/lll-lll-lll-lll/vtt-formatter
+    description: vtt-formatter
     test: |
-      system "#{bin}/vreader --version"
+      system "#{bin}/vtt-formatter --version"

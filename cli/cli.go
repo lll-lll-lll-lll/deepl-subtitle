@@ -10,7 +10,7 @@ import (
 	"github.com/lll-lll-lll-lll/vtt-formatter/vtt"
 )
 
-const Version string = "v0.1.0"
+const Version string = "v0.2.0"
 
 const (
 	ExitCodeOk             = 0
