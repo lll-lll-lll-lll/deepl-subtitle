@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/lll-lll-lll-lll/vtt-formatter/vtt"
 )
@@ -28,7 +29,7 @@ func New(outStream io.Writer, errStream io.Writer) *CLI {
 func (c *CLI) Run(args []string) int {
 	var (
 		version  bool
-		filepath string
+		filePath string
 		path     string
 		isPrint  bool
 	)
@@ -40,7 +41,7 @@ func (c *CLI) Run(args []string) int {
 		fmt.Fprintf(c.errStream, usage, "vttreader")
 	}
 	flags.BoolVar(&version, "version", false, "print version")
-	flags.StringVar(&filepath, "file", "", "vtt file")
+	flags.StringVar(&filePath, "file", "", "vtt file")
 	flags.StringVar(&path, "path", "", "save path")
 	flags.BoolVar(&isPrint, "p", false, "print vtt elements json format")
 
@@ -52,14 +53,19 @@ func (c *CLI) Run(args []string) int {
 		fmt.Fprintf(c.errStream, "vttreader version %v\n", Version)
 		return ExitCodeOk
 	}
-	if filepath != "" {
-		vttfile, err := vtt.OpenFile(filepath)
+	if filePath != "" {
+		if ext := filepath.Ext(filePath); ext != ".vtt" {
+			fmt.Fprintf(c.errStream, "file extension is not vtt: %s\n", ext)
+			return ExitCodeParseFlagError
+		}
+		vttfile, err := os.Open(filePath)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer vttfile.Close()
-		webVtt = vtt.New(vttfile)
-		webVtt.Format()
+		if _, err := webVtt.ReadFrom(vttfile); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if path != "" {

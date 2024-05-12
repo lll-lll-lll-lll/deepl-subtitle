@@ -9,20 +9,25 @@ import (
 )
 
 func main() {
-	filename := "../data/go_learn.vtt"
+	filename := "../data/example.vtt"
 	f, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("ファイルを開くのに失敗しました:", err)
 		return
 	}
 	defer f.Close()
-
-	wvtt := vtt.New(f)
-	wvtt.Format()
+	wvtt := &vtt.WebVtt{}
+	n, err := wvtt.ReadFrom(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("test", n)
 	fff, err := os.Create("test.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer fff.Close()
-	wvtt.WriteTo(os.Stdout)
+	if _, err := wvtt.WriteTo(fff); err != nil {
+		log.Fatal(err)
+	}
 }

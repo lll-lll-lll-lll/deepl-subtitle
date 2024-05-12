@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -22,6 +21,8 @@ type WebVtt struct {
 	Elements []*Element     `json:"vtt_elements"`
 	Header   *Header        `json:"header"`
 	Scanner  *bufio.Scanner `json:"scanner"`
+	builder  *strings.Builder
+	sumBytes int64
 }
 
 // A pattern from the vtt file dropped into the structure
@@ -48,17 +49,6 @@ type Header struct {
 	Note string `json:"note"`
 }
 
-func New(r io.Reader) *WebVtt {
-	s := bufio.NewScanner(r)
-	return &WebVtt{Scanner: s, Header: &Header{}}
-}
-
-func (wv *WebVtt) Format() {
-	wv.scanLines(scanSplitFunc)
-	wv.unifyText()
-	wv.deleteElementOfEmptyText()
-}
-
 func scanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	t := string(token)
@@ -70,15 +60,6 @@ func scanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 		}
 	}
 	return
-}
-
-// OpenFile is used when the WebVTT struct is initialized.
-func OpenFile(path string) (*os.File, error) {
-	ext := filepath.Ext(path)
-	if ext != ".vtt" {
-		return nil, fmt.Errorf("invalid file extension: %v, expected .vtt", ext)
-	}
-	return os.Open(path)
 }
 
 // unifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
@@ -137,9 +118,11 @@ func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 	e := &Element{}
 	wv.Scanner.Split(splitFunc)
 	var isStartOrEndTime int
+	var sumBytes int64
 
 	for wv.Scanner.Scan() {
 		line := wv.Scanner.Text()
+		sumBytes += int64(len(line)) + 1
 		switch {
 		case checkHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
@@ -175,35 +158,51 @@ func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 			e.Text += line
 		}
 	}
-
+	wv.sumBytes = sumBytes
 	if err := wv.Scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
-	// Skip head element header
-	wv.Elements = wv.Elements[1:]
+}
+
+func (wv *WebVtt) read() {
+	wv.scanLines(scanSplitFunc)
+	wv.unifyText()
+	wv.deleteElementOfEmptyText()
+}
+
+func (wv *WebVtt) ReadFrom(r io.Reader) (n int64, err error) {
+	wv.Header = &Header{}
+	wv.Scanner = bufio.NewScanner(r)
+	wv.builder = &strings.Builder{}
+	wv.read()
+	return wv.sumBytes, nil
 }
 
 func (wv *WebVtt) WriteTo(w io.Writer) (int64, error) {
+	if wv.builder.Len() == 0 {
+		wv.write()
+	}
+	n, err := w.Write([]byte(wv.builder.String()))
+	return int64(n), err
+}
+
+func (wv *WebVtt) write() {
 	const (
 		emptyRow = "\n"
 		empty    = " "
 	)
 
-	var builder strings.Builder
-
 	// Header
-	builder.WriteString(wv.Header.Head + emptyRow)
-	builder.WriteString(wv.Header.Note + emptyRow)
+	wv.builder.WriteString(wv.Header.Head + emptyRow)
+	wv.builder.WriteString(wv.Header.Note + emptyRow)
 
 	// Body
 	for _, e := range wv.Elements {
 		// Empty line
-		builder.WriteString(emptyRow)
+		wv.builder.WriteString(emptyRow)
 		// Timeline part
-		builder.WriteString(e.StartTime + empty + e.Separator + empty +
+		wv.builder.WriteString(e.StartTime + empty + e.Separator + empty +
 			e.EndTime + empty + e.Position + empty + e.Line + emptyRow)
-		builder.WriteString(e.Text + emptyRow)
+		wv.builder.WriteString(e.Text + emptyRow)
 	}
-	n, err := w.Write([]byte(builder.String()))
-	return int64(n), err
 }
