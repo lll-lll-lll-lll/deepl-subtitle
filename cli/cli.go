@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	"github.com/lll-lll-lll-lll/vtt-formatter/vtt"
 )
@@ -31,7 +32,7 @@ func (c *CLI) Run(args []string) int {
 		vttfile string
 		path    string
 		err     error
-		pj      bool
+		isPrint bool
 	)
 	webVtt := &vtt.WebVtt{}
 
@@ -43,7 +44,7 @@ func (c *CLI) Run(args []string) int {
 	flags.BoolVar(&version, "version", false, "print version")
 	flags.StringVar(&file, "file", "", "vtt file")
 	flags.StringVar(&path, "path", "", "save path")
-	flags.BoolVar(&pj, "pj", false, "print vtt elements json format")
+	flags.BoolVar(&isPrint, "p", false, "print vtt elements json format")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
@@ -63,11 +64,18 @@ func (c *CLI) Run(args []string) int {
 	}
 
 	if path != "" {
-		webVtt.WriteToFile(path)
+		f, err := os.Create(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		if _, err := webVtt.WriteTo(f); err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	if pj {
-		vtt.Print(webVtt.Elements)
+	if isPrint {
+		webVtt.WriteTo(os.Stdout)
 	}
 
 	return ExitCodeOk
@@ -81,5 +89,5 @@ Options:
   -version            		now version
   -file=<{filename}.vtt>    vtt file name
   -path=<{filename}.vtt>    shaped vtt file path
-  -p                        print json console
+  -p                        print vtt elements json format
 `

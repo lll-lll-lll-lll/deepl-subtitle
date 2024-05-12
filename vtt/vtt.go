@@ -2,15 +2,14 @@ package vtt
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
 type WebVtt struct {
-	fileContent string `json:"file"`
 	// Collection of vtt structure
 	//
 	// Example:
@@ -52,11 +51,11 @@ type Header struct {
 func New(file string) *WebVtt {
 	scanner := bufio.NewScanner(strings.NewReader(file))
 	header := &Header{}
-	return &WebVtt{fileContent: file, Scanner: scanner, Header: header}
+	return &WebVtt{Scanner: scanner, Header: header}
 }
 
 func (wv *WebVtt) Format() {
-	wv.ScanLines(scanSplitFunc)
+	wv.scanLines(scanSplitFunc)
 	wv.unifyText()
 	wv.deleteElementOfEmptyText()
 }
@@ -94,7 +93,7 @@ func ReadFileContents(filename string) (string, error) {
 // unifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
 func (wv *WebVtt) unifyText() {
 	for i := 0; i < len(wv.Elements)-1; i++ {
-		untilTerminalPointCnt := RecursiveSearchTerminalPoint(wv.Elements, i)
+		untilTerminalPointCnt := recursiveSearchTerminalPoint(wv.Elements, i)
 		for j := untilTerminalPointCnt; j > i; j-- {
 			wv.Elements[j-1].Text += " " + wv.Elements[j].Text
 			wv.Elements[j-1].EndTime = wv.Elements[j].EndTime
@@ -123,27 +122,27 @@ func (wv *WebVtt) deleteElementOfEmptyText() {
 	}
 }
 
-// RecursiveSearchTerminalPoint is a method that recursively searches for
+// recursiveSearchTerminalPoint is a method that recursively searches for
 // the terminal point in the given slice of VTT elements.
 // It returns the index of the element that contains the terminal point.
-func RecursiveSearchTerminalPoint(vs []*Element, untilTerminalCnt int) int {
-	if untilTerminalCnt == len(vs)-1 {
+func recursiveSearchTerminalPoint(elements []*Element, untilTerminalCnt int) int {
+	if untilTerminalCnt == len(elements)-1 {
 		return untilTerminalCnt
 	}
-	e := vs[untilTerminalCnt].Text
+	e := elements[untilTerminalCnt].Text
 	locs := searchTerminalToken(e)
 	f := func(locs []int) bool {
 		return len(locs) == 0
 	}
 	if f(locs) {
 		untilTerminalCnt++
-		return RecursiveSearchTerminalPoint(vs, untilTerminalCnt)
+		return recursiveSearchTerminalPoint(elements, untilTerminalCnt)
 	}
 	return untilTerminalCnt
 }
 
-// ScanLines 一行ずつ読み込んで構造体を作成するメソッド
-func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
+// scanLines 一行ずつ読み込んで構造体を作成するメソッド
+func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 	e := &Element{}
 	wv.Scanner.Split(splitFunc)
 	var isStartOrEndTime int
@@ -193,7 +192,7 @@ func (wv *WebVtt) ScanLines(splitFunc bufio.SplitFunc) {
 	wv.Elements = wv.Elements[1:]
 }
 
-func (wv *WebVtt) WriteToFile(fileName string) error {
+func (wv *WebVtt) WriteTo(w io.Writer) (int64, error) {
 	const (
 		emptyRow = "\n"
 		empty    = " "
@@ -214,26 +213,6 @@ func (wv *WebVtt) WriteToFile(fileName string) error {
 			e.EndTime + empty + e.Position + empty + e.Line + emptyRow)
 		builder.WriteString(e.Text + emptyRow)
 	}
-
-	f, err := os.Create(fileName)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = f.WriteString(builder.String())
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func Print(elements []*Element) error {
-	d, err := json.Marshal(elements)
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(d))
-	return nil
+	n, err := w.Write([]byte(builder.String()))
+	return int64(n), err
 }
