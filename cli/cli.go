@@ -27,12 +27,10 @@ func New(outStream io.Writer, errStream io.Writer) *CLI {
 
 func (c *CLI) Run(args []string) int {
 	var (
-		version bool
-		file    string
-		vttfile string
-		path    string
-		err     error
-		isPrint bool
+		version  bool
+		filepath string
+		path     string
+		isPrint  bool
 	)
 	webVtt := &vtt.WebVtt{}
 
@@ -42,7 +40,7 @@ func (c *CLI) Run(args []string) int {
 		fmt.Fprintf(c.errStream, usage, "vttreader")
 	}
 	flags.BoolVar(&version, "version", false, "print version")
-	flags.StringVar(&file, "file", "", "vtt file")
+	flags.StringVar(&filepath, "file", "", "vtt file")
 	flags.StringVar(&path, "path", "", "save path")
 	flags.BoolVar(&isPrint, "p", false, "print vtt elements json format")
 
@@ -54,11 +52,12 @@ func (c *CLI) Run(args []string) int {
 		fmt.Fprintf(c.errStream, "vttreader version %v\n", Version)
 		return ExitCodeOk
 	}
-	if file != "" {
-		vttfile, err = vtt.ReadFileContents(file)
+	if filepath != "" {
+		vttfile, err := vtt.OpenFile(filepath)
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer vttfile.Close()
 		webVtt = vtt.New(vttfile)
 		webVtt.Format()
 	}
@@ -87,7 +86,7 @@ Usage: %s [options] slug path
 Options:
   -help or h 	 		    help
   -version            		now version
-  -file=<{filename}.vtt>    vtt file name
+  -filepath=<{filename}.vtt>    vtt file path
   -path=<{filename}.vtt>    shaped vtt file path
   -p                        print vtt elements json format
 `

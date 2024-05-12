@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -9,10 +10,13 @@ import (
 
 func main() {
 	filename := "../data/go_learn.vtt"
-	f, err := vtt.ReadFileContents(filename)
+	f, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("ファイルを開くのに失敗しました:", err)
+		return
 	}
+	defer f.Close()
+
 	wvtt := vtt.New(f)
 	wvtt.Format()
 	fff, err := os.Create("test.txt")
@@ -20,6 +24,5 @@ func main() {
 		log.Fatal(err)
 	}
 	defer fff.Close()
-	wvtt.WriteTo(fff)
-
+	wvtt.WriteTo(os.Stdout)
 }

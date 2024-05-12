@@ -83,13 +83,6 @@ the way that we usefunctional components and why you need to know it.♪ I know 
 </div></details>
 
 
-**これから実装したいこと**<br>
-- テキスト内に`○○○○○.○○○`のようにテキストが途中で区切られて次の文章が含まれている場合、「.」とそれより前のテキストだけ前の構造体に接続する実装
-
-
-
-
-
 Package webvtt parse file of vtt extension.
 This package doesn't guarantee parsing incorrectly formatted vtt file
 Correct formatted vtt file example following:

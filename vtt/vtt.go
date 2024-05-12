@@ -48,10 +48,9 @@ type Header struct {
 	Note string `json:"note"`
 }
 
-func New(file string) *WebVtt {
-	scanner := bufio.NewScanner(strings.NewReader(file))
-	header := &Header{}
-	return &WebVtt{Scanner: scanner, Header: header}
+func New(r io.Reader) *WebVtt {
+	s := bufio.NewScanner(r)
+	return &WebVtt{Scanner: s, Header: &Header{}}
 }
 
 func (wv *WebVtt) Format() {
@@ -73,21 +72,13 @@ func scanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	return
 }
 
-// ReadFileContents is used when the WebVTT struct is initialized.
-func ReadFileContents(filename string) (string, error) {
-	ext := filepath.Ext(filename)
+// OpenFile is used when the WebVTT struct is initialized.
+func OpenFile(path string) (*os.File, error) {
+	ext := filepath.Ext(path)
 	if ext != ".vtt" {
-		return "", fmt.Errorf("invalid file extension: %v, expected .vtt", ext)
+		return nil, fmt.Errorf("invalid file extension: %v, expected .vtt", ext)
 	}
-
-	b, err := os.ReadFile(filename)
-	if err != nil {
-		return "", fmt.Errorf("failed to read file: %v, error: %w", filename, err)
-	}
-	if len(b) == 0 {
-		return "", fmt.Errorf("file content is empty: %v", filename)
-	}
-	return string(b), nil
+	return os.Open(path)
 }
 
 // unifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
