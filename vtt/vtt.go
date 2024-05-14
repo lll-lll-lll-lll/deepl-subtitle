@@ -109,9 +109,6 @@ func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 		sumBytes += len(line) + 1
 
 		// Skip empty lines
-		if line == "" {
-			continue
-		}
 		switch {
 		case checkHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
