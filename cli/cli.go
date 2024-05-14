@@ -32,6 +32,7 @@ func (c *CLI) Run(args []string) int {
 		filePath string
 		path     string
 		isPrint  bool
+		help     bool // Add help flag
 	)
 	webVtt := &vtt.WebVtt{}
 
@@ -41,12 +42,18 @@ func (c *CLI) Run(args []string) int {
 		fmt.Fprintf(c.errStream, usage, "vtt-formatter")
 	}
 	flags.BoolVar(&version, "version", false, "print version")
-	flags.StringVar(&filePath, "filepath", "", "vtt file")
-	flags.StringVar(&path, "path", "", "save path")
-	flags.BoolVar(&isPrint, "p", false, "print vtt elements json format")
+	flags.StringVar(&filePath, "filepath", "", "path to the VTT file")
+	flags.StringVar(&path, "path", "", "path to save the formatted VTT file")
+	flags.BoolVar(&isPrint, "p", false, "print VTT elements in JSON format")
+	flags.BoolVar(&help, "help", false, "print help")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagError
+	}
+
+	if help { // Check if help flag is set
+		flags.Usage()
+		return ExitCodeOk
 	}
 
 	if version {
@@ -90,9 +97,9 @@ const usage = `
 Usage: %s [options] slug path
   
 Options:
-  -help or h 	 		    help
-  -version            		now version
-  -filepath=<{filename}.vtt>    vtt file path
-  -path=<{filename}.vtt>    shaped vtt file path
-  -p                        print vtt elements json format
+  -help or h                    Print help
+  -version                      Print version
+  -filepath=<{filename}.vtt>    Path to the VTT file
+  -path=<{filename}.vtt>        Path to save the formatted VTT file
+  -p                            Print VTT elements in JSON format
 `

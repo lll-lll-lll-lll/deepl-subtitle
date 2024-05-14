@@ -1,29 +1,34 @@
-# unify-vtt-text
 
 # Specification
 https://www.w3.org/TR/webvtt1/
 
+This is a tool for formatting VTT (Video Text Tracks) files. It follows the specification provided by W3C, which can be found [here](https://www.w3.org/TR/webvtt1/).
 
-## Install
+## Installation
+
+To install `vtt-formatter`, you need to tap into our Homebrew repository and then install the package. Run the following commands in your terminal:
+
 ```sh
 brew tap lll-lll-lll-lll/vtt-formatter
-```
-
-```sh
 brew install vtt-formatter
 ```
 
-
-```md
-Usage: vreader [options] 
+## Usage
+You can use VTT Formatter from the command line with the following options:
 
 Options:
-  -help or h 	 		        help
-  -version            		 now version
-  -filepath=<{filename}.vtt>    vtt file name
-  -path=<{filename}.vtt>    File name of destination
-  -p                        print json in console
-```
+
+- `-h` or `--help`: Display help information
+- `-v` or `--version`: Display the current version of VTT Formatter
+- `-i` or `--input=<filename.vtt>`: Specify the VTT file to be formatted
+- `-o` or `--output=<filename.vtt>`: Specify the destination file for the formatted VTT
+- `-p` or `--print`: Print the formatted VTT to the console
+
+## CLI Example
+
+```sh
+vtt-formatter --input example.vtt --print --output formattedfile.vtt
+
 
 ### CLI Example
 
@@ -50,34 +55,3 @@ the way that we usefunctional components and why you need to know it.♪ I know 
 </div></details>
 <br>
 <br>
-
-<details><summary>output json</summary><div>
-
-```json
-
-{
-  "start_time": "00:00:00.350",
-  "end_time": "00:00:02.770",
-  "position": "position:63%",
-  "line": "line:0%",
-  "text": "- Yo what is going on guys, welcome back to the channel.",
-  "separator": "--\u003e"
-},
-{
-  "start_time": "00:00:02.770",
-  "end_time": "00:00:08.840",
-  "position": "position:63%",
-  "line": "line:0%",
-  "text": "My name's Sonny and todayI'm gonna teach you all about the useEffect Hook and why it has transformed.",
-  "separator": "--\u003e"
-},
-{
-  "start_time": "00:00:08.840",
-  "end_time": "00:00:12.158",
-  "position": "position:63%",
-  "line": "line:0%",
-  "text": "the way that we usefunctional components and why you need to know it.♪ I know ♪",
-  "separator": "--\u003e"
-}
-```
-</div></details>

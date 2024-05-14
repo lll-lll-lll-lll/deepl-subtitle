@@ -9,47 +9,32 @@ import (
 	"strings"
 )
 
+// WebVtt represents a WebVTT file.
 type WebVtt struct {
-	// Collection of vtt structure
-	//
-	// Example:
-	// 00:00:00.350 --> 00:00:01.530 position:63% line:0%
-	// Yo what is going on guys,
-	//
-	// 00:00:01.530 --> 00:00:02.770 position:63% line:0%
-	// welcome back to the channel.
-	//
-	Elements []*Element     `json:"vtt_elements"`
-	Header   *Header        `json:"header"`
-	Scanner  *bufio.Scanner `json:"scanner"`
+	Elements []*Element     `json:"vtt_elements"` // Collection of vtt structure
+	Header   *Header        `json:"header"`       // First two lines of the vtt file
+	Scanner  *bufio.Scanner `json:"scanner"`      // Scanner for reading the file
 	builder  *strings.Builder
 	sumBytes int
 }
 
-// A pattern from the vtt file dropped into the structure
-//
-// Example:
-// 00:00:00.350(StartTime) -->(Separator) 00:00:01.530(EndTime) position:63%(Position) line:0%(Line)
-// Yo what is going on guys,(Text)
+// Element represents a pattern from the vtt file.
 type Element struct {
-	StartTime string `json:"start_time"`
-	EndTime   string `json:"end_time"`
-	Position  string `json:"position"`
-	Line      string `json:"line"`
-	Text      string `json:"text"`
-	Separator string `json:"separator"`
+	StartTime string `json:"start_time"` // Start time of the element
+	EndTime   string `json:"end_time"`   // End time of the element
+	Position  string `json:"position"`   // Position of the element
+	Line      string `json:"line"`       // Line of the element
+	Text      string `json:"text"`       // Text of the element
+	Separator string `json:"separator"`  // Separator of the element
 }
 
-// First two lines of the vtt file
-//
-// Example:
-// WEBVTT
-// Kind: captions
+// Header represents the first two lines of the vtt file.
 type Header struct {
-	Head string `json:"head"`
-	Note string `json:"note"`
+	Head string `json:"head"` // First line of the header
+	Note string `json:"note"` // Second line of the header
 }
 
+// scanSplitFunc is a split function for the scanner.
 func scanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	advance, token, err = bufio.ScanLines(data, atEOF)
 	t := string(token)
@@ -63,7 +48,7 @@ func scanSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err erro
 	return
 }
 
-// unifyText Updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
+// unifyText updates EndTime by passing Text to the previous structure if it contains `.` or `?`.
 func (wv *WebVtt) unifyText() {
 	for i := 0; i < len(wv.Elements)-1; i++ {
 		untilTerminalPointCnt := recursiveSearchTerminalPoint(wv.Elements, i)
@@ -79,8 +64,7 @@ func (wv *WebVtt) unifyText() {
 	}
 }
 
-// DeleteElementOfEmptyText
-// Loop until all structures with empty text are deleted
+// deleteElementOfEmptyText deletes all structures with empty text.
 func (wv *WebVtt) deleteElementOfEmptyText() {
 	var i int
 	for {
@@ -95,8 +79,7 @@ func (wv *WebVtt) deleteElementOfEmptyText() {
 	}
 }
 
-// recursiveSearchTerminalPoint is a method that recursively searches for
-// the terminal point in the given slice of VTT elements.
+// recursiveSearchTerminalPoint recursively searches for the terminal point in the given slice of VTT elements.
 // It returns the index of the element that contains the terminal point.
 func recursiveSearchTerminalPoint(elements []*Element, untilTerminalCnt int) int {
 	if untilTerminalCnt == len(elements)-1 {
@@ -114,7 +97,7 @@ func recursiveSearchTerminalPoint(elements []*Element, untilTerminalCnt int) int
 	return untilTerminalCnt
 }
 
-// scanLines 一行ずつ読み込んで構造体を作成するメソッド
+// scanLines reads the file line by line and creates the structure.
 func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 	e := &Element{}
 	wv.Scanner.Split(splitFunc)
@@ -124,6 +107,11 @@ func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 	for wv.Scanner.Scan() {
 		line := wv.Scanner.Text()
 		sumBytes += len(line) + 1
+
+		// Skip empty lines
+		if line == "" {
+			continue
+		}
 		switch {
 		case checkHeader(line):
 			if wv.Header.Head != "" && wv.Header.Note != "" {
@@ -165,12 +153,14 @@ func (wv *WebVtt) scanLines(splitFunc bufio.SplitFunc) {
 	}
 }
 
+// read reads the WebVTT file.
 func (wv *WebVtt) read() {
 	wv.scanLines(scanSplitFunc)
 	wv.unifyText()
 	wv.deleteElementOfEmptyText()
 }
 
+// Read reads the WebVTT file from a byte slice.
 func (wv *WebVtt) Read(p []byte) (n int, err error) {
 	wv.Header = &Header{}
 	wv.Scanner = bufio.NewScanner(bytes.NewReader(p))
@@ -179,6 +169,7 @@ func (wv *WebVtt) Read(p []byte) (n int, err error) {
 	return int(wv.sumBytes), nil
 }
 
+// ReadFrom reads the WebVTT file from an io.Reader.
 func (wv *WebVtt) ReadFrom(r io.Reader) (n int64, err error) {
 	wv.Header = &Header{}
 	wv.Scanner = bufio.NewScanner(r)
@@ -187,6 +178,7 @@ func (wv *WebVtt) ReadFrom(r io.Reader) (n int64, err error) {
 	return int64(wv.sumBytes), nil
 }
 
+// WriteTo writes the WebVTT file to an io.Writer.
 func (wv *WebVtt) WriteTo(w io.Writer) (int64, error) {
 	if wv.builder.Len() == 0 {
 		wv.write()
@@ -195,6 +187,7 @@ func (wv *WebVtt) WriteTo(w io.Writer) (int64, error) {
 	return int64(n), err
 }
 
+// write writes the WebVTT file.
 func (wv *WebVtt) write() {
 	const (
 		emptyRow = "\n"
